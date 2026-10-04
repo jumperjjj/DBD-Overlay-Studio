@@ -7,8 +7,10 @@ body:not(.streakLocked) #streakRoot{-webkit-app-region:drag;cursor:url("assets/m
 body.streakLocked #streakRoot{-webkit-app-region:no-drag;cursor:default}
 </style></head><body class="streakLocked"><div id="streakRoot" class="streak-widget"></div>
 <script src="streak-render.js"></script><script>
-let S=null;
-function apply(s){if(!s)return;S=s;const locked=s.streak?.locked!==false;document.body.classList.toggle('streakLocked',locked);StreakRenderer.apply(streakRoot,s)}
-api.onState(apply);api.onStreakLock?.(locked=>document.body.classList.toggle('streakLocked',!!locked));
-(async()=>{const x=await api.get();apply(x.state)})();
+let S=null,lastPointSoundId='';
+const pointSound=new Audio('assets/streak-point.wav');pointSound.preload='auto';pointSound.volume=.42;
+function playPointSound(){try{pointSound.pause();pointSound.currentTime=0;const p=pointSound.play();if(p?.catch)p.catch(()=>{})}catch{}}
+function apply(s,allowSound=true){if(!s)return;S=s;const locked=s.streak?.locked!==false;document.body.classList.toggle('streakLocked',locked);const id=String(s.streak?.pulseId||'');if(allowSound&&s.streak?.pulsePending&&id&&id!==lastPointSoundId)playPointSound();if(id)lastPointSoundId=id;StreakRenderer.apply(streakRoot,s)}
+api.onState(s=>apply(s,true));api.onStreakLock?.(locked=>document.body.classList.toggle('streakLocked',!!locked));
+(async()=>{const x=await api.get();apply(x.state,false)})();
 </script></body></html>

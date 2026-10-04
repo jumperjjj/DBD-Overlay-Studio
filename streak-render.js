@@ -49,11 +49,15 @@
         </div>
       </div>`;
   }
-  function fitKillerName(el){
+  function fitKillerName(el,fitKey){
     if(!el)return;
+    // Do not recalculate the fitted font when unrelated controls (shadow, opacity, etc.) change.
+    // Re-fitting through a zoomed Electron window can introduce half-pixel rounding and make the
+    // name appear to change size. Only refit when the Killer or visual style actually changes.
+    if(el.dataset.fitKey===fitKey)return;
+    el.dataset.fitKey=fitKey;
     el.style.removeProperty('font-size');
     el.style.removeProperty('letter-spacing');
-    // Start at the style's intended size, then only shrink when a long Killer name truly needs it.
     let size=parseFloat(getComputedStyle(el).fontSize)||24;
     let spacing=parseFloat(getComputedStyle(el).letterSpacing);if(!Number.isFinite(spacing))spacing=0;
     const min=15.5;
@@ -69,7 +73,8 @@
     const bg=/^#[0-9a-f]{6}$/i.test(String(s.bg1||''))?s.bg1:'#0d1118';
     const opacity=clamp(s.opacity??1,0,1);
     const shadowStrength=clamp(s.glow??70,0,100)/100;
-    const shadowPower=shadowStrength*1.3;
+    // Keep the shadow control useful on a transparent background without washing the text in glow.
+    const shadowPower=shadowStrength;
     const mode=s.mode==='survivor'?'survivor':'killer';
     const style=Math.max(0,Math.min(3,Math.floor(Number(s.style)||0)));
     const survivorVisual=mode==='survivor'&&s.survivorVisual===true;
@@ -79,10 +84,10 @@
     root.style.setProperty('--panel',`rgba(${r},${g},${b},${(.965*opacity).toFixed(3)})`);
     root.style.setProperty('--panel-soft',`rgba(${Math.min(255,r+17)},${Math.min(255,g+19)},${Math.min(255,b+24)},${(.925*opacity).toFixed(3)})`);
     root.style.setProperty('--border',`rgba(255,255,255,${(.14*opacity).toFixed(3)})`);
-    root.style.setProperty('--text-filter',shadowStrength<=0?'none':`drop-shadow(0 1px ${(0.6+2.2*shadowPower).toFixed(2)}px rgba(0,0,0,${Math.min(.88,0.20+0.48*shadowPower).toFixed(3)}))`);
-    root.style.setProperty('--white-glow',shadowStrength<=0?'none':`0 0 ${(2+6*shadowPower).toFixed(1)}px rgba(255,255,255,${Math.min(.46,0.12+0.25*shadowPower).toFixed(2)}),0 2px 5px rgba(0,0,0,.78)`);
-    // Slightly stronger glow only for the Killer name / Survivor streak name. Top text and record keep the existing glow.
-    root.style.setProperty('--entity-glow',shadowStrength<=0?'none':`0 0 ${(3+7.2*shadowPower).toFixed(1)}px rgba(255,255,255,${Math.min(.56,0.16+0.29*shadowPower).toFixed(2)}),0 2px 6px rgba(0,0,0,.80)`);
+    root.style.setProperty('--text-filter',shadowStrength<=0?'none':`drop-shadow(0 1px ${(0.7+2.0*shadowPower).toFixed(2)}px rgba(0,0,0,${Math.min(.82,0.22+0.46*shadowPower).toFixed(3)}))`);
+    root.style.setProperty('--white-glow',shadowStrength<=0?'none':`0 0 ${(1.8+4.4*shadowPower).toFixed(1)}px rgba(255,255,255,${Math.min(.36,0.10+0.20*shadowPower).toFixed(2)}),0 2px 5px rgba(0,0,0,.78)`);
+    // Main label gets only a restrained halo; the dark drop-shadow still protects readability at 0% panel opacity.
+    root.style.setProperty('--entity-glow',shadowStrength<=0?'none':`0 0 ${(2.0+4.8*shadowPower).toFixed(1)}px rgba(255,255,255,${Math.min(.34,0.10+0.19*shadowPower).toFixed(2)}),0 2px 6px rgba(0,0,0,.82)`);
     // The shadow slider is text-only. Keep the overlay/card shadow fixed so borders and panels never change with this control.
     root.style.setProperty('--card-shadow','rgba(0,0,0,.34)');
 
@@ -104,7 +109,7 @@
     entity.textContent=entityText;
     entity.classList.toggle('long-name',mode==='killer'&&entityText.length>=15);
     entity.classList.toggle('very-long-name',mode==='killer'&&entityText.length>=18);
-    if(mode==='killer')fitKillerName(entity);else{entity.style.removeProperty('font-size');entity.style.removeProperty('letter-spacing')}
+    if(mode==='killer')fitKillerName(entity,`${style}|${entityText}`);else{entity.dataset.fitKey='';entity.style.removeProperty('font-size');entity.style.removeProperty('letter-spacing')}
     root.querySelector('.streak-value').textContent=String(Math.max(0,Math.floor(Number(s.value)||0)));
     root.querySelector('.record-chip b').textContent=String(Math.max(0,Math.floor(Number(s.recordValue)||0)));
     const pulse=root.querySelector('.streak-pulse');

@@ -12,7 +12,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent
 .survivor-img{width:164px;height:184px}
 .visual-empty{position:absolute;z-index:2;inset:13px 11px;align-items:center;justify-content:center;border:1px solid color-mix(in srgb,var(--accent) 58%,#ffffff22);border-radius:11px;background:linear-gradient(145deg,color-mix(in srgb,var(--accent) 10%,transparent),rgba(255,255,255,.015));color:#eef1f5;font-size:11px;font-weight:900;letter-spacing:1.7px;text-transform:uppercase;text-shadow:0 2px 5px #000}
 .streak-main{position:relative;min-width:0;padding:14px 16px 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
-.custom-line{width:100%;min-height:17px;margin-bottom:4px;color:#b6bec9;font-size:12px;font-weight:800;letter-spacing:1.55px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;filter:var(--text-filter,none)}
+.custom-line{width:100%;min-height:17px;margin-bottom:4px;color:#b6bec9;font-size:14px;font-weight:800;letter-spacing:1.55px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;filter:var(--text-filter,none)}
 .custom-line.empty{visibility:hidden}
 .entity-name{width:100%;margin-bottom:5px;color:#fff;font-size:18px;font-weight:900;line-height:1.05;letter-spacing:1.15px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:var(--entity-glow,var(--white-glow));filter:var(--text-filter,none);text-overflow:clip}
 .mode-survivor .entity-name{font-size:24px;letter-spacing:1.55px}
@@ -22,11 +22,12 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent
 .mode-killer .value-wrap{margin-top:6px}
 .value-wrap{position:relative;display:flex;align-items:center;justify-content:center;min-height:58px}
 .streak-value{position:relative;z-index:1;color:var(--accent);font-size:var(--number-size);font-weight:900;line-height:.90;letter-spacing:-1.5px;text-shadow:0 0 10px color-mix(in srgb,var(--accent) 58%,transparent),0 3px 8px rgba(0,0,0,.78);filter:var(--text-filter,none)}
-.streak-pulse{position:absolute;z-index:4;left:50%;top:50%;opacity:0;pointer-events:none;color:#fff;font-size:var(--number-size);font-weight:950;line-height:.90;letter-spacing:-1.5px;text-shadow:0 0 7px #fff,0 0 17px color-mix(in srgb,var(--accent) 88%,transparent),0 4px 9px rgba(0,0,0,.88);transform:translate3d(-50%,-50%,0) scale(.20);transform-origin:center center;will-change:transform,opacity;backface-visibility:hidden;-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
-.streak-pulse.play{animation:streakPlusPulse 2.70s cubic-bezier(.18,.72,.20,1) both}
-.pulse-active .streak-value{animation:streakValueDuringPulse 2.70s ease both}
-@keyframes streakPlusPulse{0%{opacity:0;transform:translate3d(-50%,-50%,0) scale(.20)}10%{opacity:.92;transform:translate3d(-50%,-50%,0) scale(.36)}24%{opacity:1;transform:translate3d(-50%,-50%,0) scale(.58)}42%{opacity:1;transform:translate3d(-50%,-50%,0) scale(.82)}58%{opacity:1;transform:translate3d(-50%,-50%,0) scale(1)}68%{opacity:1;transform:translate3d(-50%,-50%,0) scale(1.06)}74%{opacity:.98;transform:translate3d(-50%,-50%,0) scale(1.03)}82%{opacity:.66;transform:translate3d(-50%,-50%,0) scale(1.05)}91%{opacity:.26;transform:translate3d(-50%,-50%,0) scale(1.08)}100%{opacity:0;transform:translate3d(-50%,-50%,0) scale(1.10)}}
-@keyframes streakValueDuringPulse{0%{opacity:1;transform:scale(1)}5%{opacity:0;transform:scale(.98)}84%{opacity:0;transform:scale(.98)}88%{opacity:.18;transform:scale(.99)}94%{opacity:.72;transform:scale(1.01)}100%{opacity:1;transform:scale(1)}}
+.streak-pulse{position:absolute;z-index:4;left:50%;top:50%;opacity:0;pointer-events:none;color:#fff;font-size:var(--number-size);font-weight:950;line-height:.90;letter-spacing:-1.5px;text-shadow:0 0 6px #fff,0 0 14px color-mix(in srgb,var(--accent) 78%,transparent),0 4px 9px rgba(0,0,0,.86);transform:translate3d(-50%,-50%,0) scale(.72);transform-origin:center center;will-change:transform,opacity;backface-visibility:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;contain:paint}
+.streak-pulse.play{animation:streakPlusPulse 2.95s cubic-bezier(.22,.72,.22,1) both}
+.pulse-active .streak-value{animation:streakValueDuringPulse 2.95s linear both}
+/* A single continuous GPU transform avoids the stepped/low-FPS feel caused by scaling a tiny rasterized glyph. */
+@keyframes streakPlusPulse{0%{opacity:0;transform:translate3d(-50%,-50%,0) scale(.72)}9%{opacity:.98}68%{opacity:1;transform:translate3d(-50%,-50%,0) scale(1.065)}80%{opacity:1;transform:translate3d(-50%,-50%,0) scale(1.025)}86%{opacity:.92;transform:translate3d(-50%,-50%,0) scale(1.045)}100%{opacity:0;transform:translate3d(-50%,-50%,0) scale(1.075)}}
+@keyframes streakValueDuringPulse{0%{opacity:1;transform:scale(1)}2%{opacity:0;transform:scale(.99)}90%{opacity:0;transform:scale(.99)}94%{opacity:.34;transform:scale(.995)}100%{opacity:1;transform:scale(1)}}
 .record-chip{margin-top:10px;min-width:122px;min-height:27px;padding:4px 12px 3px;border:1px solid color-mix(in srgb,var(--accent) 58%,#ffffff18);border-radius:8px;background:rgba(0,0,0,.23);display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:inset 0 1px rgba(255,255,255,.035)}
 .record-chip span{font-size:11px;font-weight:850;letter-spacing:1.45px;color:#fff;text-shadow:var(--white-glow);filter:var(--text-filter,none)}.record-chip b{font-size:18px;line-height:1;color:#fff;font-weight:900;text-shadow:0 1px 4px rgba(0,0,0,.78);filter:var(--text-filter,none)}
 .mode-survivor.survivor-visual-off .streak-card{grid-template-columns:1fr}
@@ -57,7 +58,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent
 .style-3 .survivor-img{width:154px;height:171px;top:49%}
 .style-3 .visual-empty{inset:18px 10px;border-style:dashed;background:rgba(255,255,255,.015)}
 .style-3 .streak-main{padding:10px 14px 9px;justify-content:center}
-.style-3 .custom-line{font-size:11px;margin-bottom:2px;letter-spacing:1.7px}
+.style-3 .custom-line{font-size:13px;margin-bottom:2px;letter-spacing:1.7px}
 .style-3 .entity-name{margin-bottom:4px}
 .style-3{--number-size:57px}.style-3 .value-wrap{min-height:50px}.style-3 .streak-value,.style-3 .streak-pulse{line-height:.86}
 .style-3 .record-chip{margin-top:7px;min-width:112px;min-height:22px;padding:3px 10px;border:0;border-top:1px solid color-mix(in srgb,var(--accent) 72%,transparent);border-radius:0;background:transparent;box-shadow:none}

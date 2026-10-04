@@ -271,15 +271,17 @@ function beginStreakPlusPulse() {
   clearTimeout(streakIncrementTimer);
   // Commit while +1 is already fading, but before the real value is allowed to fade back in.
   // This avoids ever showing the old value changing into the new one on screen.
-  streakIncrementCommitTimer = setTimeout(() => commitStreakPlus(target), 2150);
-  // Keep the full 3 second input lock so the animation cannot be interrupted.
+  // Update the saved value only after +1 is already deep into its fade. The real number is
+  // still hidden at this point, so the user never sees the old digit morph into the new one.
+  streakIncrementCommitTimer = setTimeout(() => commitStreakPlus(target), 2670);
+  // Keep the control lock just beyond the visual effect so it cannot be interrupted mid-animation.
   streakIncrementTimer = setTimeout(() => {
     S.streak.pulsePending = false;
     S.streak.pulseDelta = 0;
     S.streak.pulseStartedAt = 0;
     syncCurrentStreakBucket();
     saveState();
-  }, 3000);
+  }, 3050);
   return true;
 }
 
