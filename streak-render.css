@@ -1,0 +1,25 @@
+:root{font-family:Bahnschrift,"Segoe UI",Arial,sans-serif}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent}
+.streak-widget{position:relative;width:350px;height:285px;color:#f7f8fa;--accent:#3b82f6;--panel:rgba(13,14,19,.96);--panel-soft:rgba(24,27,34,.94);--border:rgba(255,255,255,.14);--shadowText:0 2px 5px rgba(0,0,0,.68);font-family:Bahnschrift,"Segoe UI",Arial,sans-serif;font-variant-numeric:tabular-nums;user-select:none}
+.streak-card{position:absolute;left:8px;top:32px;width:334px;height:174px;border:1px solid var(--border);border-radius:12px;background:linear-gradient(118deg,var(--panel),var(--panel-soft));box-shadow:0 10px 28px rgba(0,0,0,.30),inset 0 1px rgba(255,255,255,.035);overflow:hidden;display:grid;grid-template-columns:118px 1fr}
+.streak-card:before{content:"";position:absolute;left:0;top:12px;bottom:12px;width:4px;border-radius:0 4px 4px 0;background:var(--accent);box-shadow:0 0 13px color-mix(in srgb,var(--accent) 52%,transparent)}
+.killer-side{position:relative;min-width:0;overflow:hidden;background:linear-gradient(160deg,color-mix(in srgb,var(--accent) 15%,transparent),transparent 58%)}
+.killer-img{position:absolute;left:3px;right:3px;bottom:-4px;width:112px;height:164px;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 7px 7px rgba(0,0,0,.58));opacity:1}
+.killer-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#777f8c;font-size:13px;font-weight:800;letter-spacing:1px;text-transform:uppercase}
+.survivor-mark{position:absolute;inset:14px 12px;display:none;align-items:center;justify-content:center;border:1px solid color-mix(in srgb,var(--accent) 56%,#ffffff22);border-radius:11px;background:linear-gradient(145deg,color-mix(in srgb,var(--accent) 13%,transparent),rgba(255,255,255,.015));overflow:hidden}
+.survivor-mark:before,.survivor-mark:after{content:"";position:absolute;width:55px;height:3px;background:var(--accent);opacity:.72;box-shadow:0 0 9px color-mix(in srgb,var(--accent) 42%,transparent)}
+.survivor-mark:before{transform:rotate(55deg)}.survivor-mark:after{transform:rotate(-55deg)}
+.survivor-mark span{position:relative;z-index:2;font-size:13px;font-weight:900;letter-spacing:1.6px;color:#e9edf3;text-shadow:var(--shadowText);writing-mode:vertical-rl;transform:rotate(180deg)}
+.streak-card.mode-survivor .killer-img,.streak-card.mode-survivor .killer-empty{display:none}.streak-card.mode-survivor .survivor-mark{display:flex}
+.streak-main{position:relative;min-width:0;padding:13px 17px 12px 13px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.custom-line{width:100%;min-height:15px;margin-bottom:2px;color:#aeb5c0;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:var(--shadowText)}
+.custom-line.empty{visibility:hidden}
+.entity-name{width:100%;margin-bottom:7px;color:#fff;font-size:13px;font-weight:850;letter-spacing:.9px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 0 5px rgba(255,255,255,.24),var(--shadowText)}
+.win-label{color:#c8cdd6;font-size:17px;font-weight:850;letter-spacing:1.8px;line-height:1;text-transform:uppercase;text-shadow:var(--shadowText)}
+.streak-value{margin-top:3px;color:var(--accent);font-size:58px;font-weight:850;line-height:.92;letter-spacing:-1px;text-shadow:0 0 8px color-mix(in srgb,var(--accent) 55%,transparent),0 2px 7px rgba(0,0,0,.78)}
+.record-chip{margin-top:9px;min-width:104px;min-height:25px;padding:4px 10px 3px;border:1px solid color-mix(in srgb,var(--accent) 46%,#ffffff18);border-radius:7px;background:rgba(0,0,0,.22);display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:inset 0 1px rgba(255,255,255,.035)}
+.record-chip span{font-size:9px;font-weight:850;letter-spacing:1px;color:#959daa}.record-chip b{font-size:15px;line-height:1;color:#f5f7fa;font-weight:850}
+.zero-opacity .streak-card{background:transparent!important;border-color:transparent!important;box-shadow:none!important}.zero-opacity .killer-side{background:transparent!important}.zero-opacity .record-chip{background:transparent!important}
+
+.custom-line,.entity-name,.win-label,.streak-value,.record-chip{filter:var(--text-filter,none)}

@@ -1,7 +1,7 @@
 {
   "name": "dbd-overlay-studio",
-  "version": "2.0.3-beta.1",
-  "description": "DBD Overlay Studio - Beta 2.0.3",
+  "version": "2.0.4-beta.1",
+  "description": "DBD Overlay Studio - Beta 2.0.4",
   "main": "main-v2.js",
   "author": "Jumper",
   "license": "MIT",
@@ -33,7 +33,10 @@
       "timer-render.js",
       "timer-render.css",
       "killers/**/*",
-      "assets/**/*"
+      "assets/**/*",
+      "streak-ui-v2.js",
+      "streak-render.js",
+      "streak-render.css"
     ],
     "win": {
       "target": [
@@ -44,7 +47,7 @@
           ]
         }
       ],
-      "artifactName": "DBD-Overlay-Studio-Beta-2.0.3-Windows-x64-Setup.${ext}",
+      "artifactName": "DBD-Overlay-Studio-Beta-2.0.4-Windows-x64-Setup.${ext}",
       "executableName": "DBD Overlay Studio",
       "icon": "assets/icon.ico"
     },

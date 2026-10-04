@@ -723,6 +723,29 @@ app.on('before-quit', () => {
 // Keep WinStreak + Confronto intact while the new Timer is tested.
 require('./main.js');
 
+// WinStreak v2: direct lock/click-through control without changing the legacy
+// Confronto module. The new Streak UI persists `streak.locked` through main.js
+// and calls this bridge to apply it to the actual transparent overlay window.
+function findStreakOverlayWindow() {
+  return BrowserWindow.getAllWindows().find(w => {
+    if (!w || w.isDestroyed() || w.webContents.isDestroyed()) return false;
+    try {
+      const u = decodeURIComponent(w.webContents.getURL() || '');
+      return /(?:^|\/)streak\.html(?:$|[?#])/i.test(u);
+    } catch { return false; }
+  }) || null;
+}
+function applyStreakOverlayLock(locked) {
+  const w = findStreakOverlayWindow();
+  if (!w) return false;
+  const isLocked = locked !== false;
+  try { w.setIgnoreMouseEvents(isLocked); } catch {}
+  try { w.setFocusable(!isLocked); } catch {}
+  try { w.webContents.send('streak-lock-state', isLocked); } catch {}
+  return true;
+}
+ipcMain.handle('streak-lock', (_, locked) => applyStreakOverlayLock(!!locked));
+
 ipcMain.handle('hotkey-conflict-check', (_, accel, owner) => {
   const c = hotkeyConflict(accel, String(owner || ''));
   return c ? { conflict: true, label: c.label } : { conflict: false };

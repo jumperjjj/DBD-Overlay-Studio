@@ -1,75 +1,8 @@
 <!doctype html><html><head><meta charset="utf-8"><style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent}body{font-family:Segoe UI,Arial;color:#fff}#root{position:relative;width:350px;height:285px;overflow:hidden}.panel{--panel-bg:#15191f;--panel-accent:#d7b84a;position:absolute;background:var(--panel-bg);color:#fff;opacity:var(--opacity,1);overflow:hidden}.main{left:15px;top:15px;width:312px;height:66px;display:flex;align-items:center;justify-content:center}.content{position:relative;z-index:2;width:100%;display:flex;align-items:center;justify-content:center;gap:18px;padding:0 22px;white-space:nowrap}.name{font-family:var(--name-font);font-size:var(--name-size);font-weight:var(--name-weight);color:var(--name-color);transform:translateX(var(--name-x));line-height:1}.value{font-family:var(--value-font);font-size:var(--value-size);font-weight:900;color:var(--value-color);transform:translateX(var(--value-x));line-height:1}.mini{display:none;width:127px;height:30px;align-items:center;justify-content:center;gap:6px;padding:0 8px;font-size:9px}.mini span{font-weight:900;letter-spacing:.5px;color:var(--mini-name)}.mini b{font-size:16px;color:var(--mini-value);line-height:1}.shadow .main{filter:drop-shadow(0 6px 6px #0009)}
-/* 1 Neon Panel */
-.theme-0 .panel{border:2px solid var(--panel-accent);box-shadow:inset 0 0 18px color-mix(in srgb,var(--panel-accent) 28%,transparent)}.theme-0 .main{transform:skew(-6deg)}.theme-0 .main .content{transform:skew(6deg)}.theme-0 .mini{transform:skew(-6deg)}.theme-0 .mini>*{transform:skew(6deg)}
-/* 2 Score Tab */
-.theme-1 .panel{border:1px solid #ffffff28;border-bottom:3px solid var(--panel-accent);border-radius:8px;background:linear-gradient(180deg,color-mix(in srgb,var(--panel-bg) 88%,#ffffff0d),var(--panel-bg))}.theme-1 .mini{border-radius:5px}
-/* 3 Round Badge */
-.theme-2 .panel{border:2px solid var(--panel-accent);border-radius:999px}.theme-2 .main{width:294px;left:23px}.theme-2 .mini{border-radius:999px}
-/* 4 Arcade Box */
-.theme-3 .panel{border:1px solid #ffffff50;border-radius:22px;background:color-mix(in srgb,var(--panel-bg) 82%,transparent)}.theme-3.shadow .main{filter:none}.theme-3 .mini{border-radius:15px;box-shadow:none}
-/* 5 Broadcast Bar */
-.theme-4 .panel{border:3px double var(--panel-accent)}.theme-4 .main{width:298px;left:21px}.theme-4 .mini{border-width:2px}
-/* 6 Cyber Cut */
-.theme-5 .panel{border-left:7px solid var(--panel-accent);border-right:2px solid var(--panel-accent)}.theme-5 .main{width:318px;left:11px}.theme-5 .mini{border-left-width:5px}
-/* 7 Elegant */
-.theme-6 .panel{clip-path:polygon(7% 0,100% 0,93% 100%,0 100%);border-top:2px solid var(--panel-accent);border-bottom:2px solid var(--panel-accent)}.theme-6 .main{width:310px;left:15px}.theme-6 .mini{clip-path:polygon(7% 0,100% 0,93% 100%,0 100%)}
-/* 8 Ribbon Core */
-.theme-7 .panel{clip-path:polygon(7% 0,93% 0,100% 50%,93% 100%,7% 100%,0 50%);border-top:2px solid var(--panel-accent);border-bottom:2px solid var(--panel-accent);background:linear-gradient(90deg,color-mix(in srgb,var(--panel-accent) 12%,var(--panel-bg)),var(--panel-bg) 28% 72%,color-mix(in srgb,var(--panel-accent) 12%,var(--panel-bg)))}
-
-/* 9 Bracket Edge */
-.theme-8 .panel{background:var(--panel-bg);border:0;clip-path:polygon(9px 0,100% 0,100% calc(100% - 9px),calc(100% - 9px) 100%,0 100%,0 9px);box-shadow:inset 3px 0 var(--panel-accent),inset 0 -2px var(--panel-accent)}
-.theme-8 .main{width:306px;left:18px}.theme-8 .mini{box-shadow:inset 2px 0 var(--panel-accent),inset 0 -1px var(--panel-accent)}
-/* 10 Split Blade */
-.theme-9 .panel{position:absolute;background:var(--panel-bg);clip-path:polygon(7% 0,100% 0,93% 100%,0 100%);border-left:2px solid var(--panel-accent);border-bottom:2px solid var(--panel-accent)}
-.theme-9 .panel:after{content:'';position:absolute;right:0;top:0;width:18px;height:100%;background:var(--panel-accent);clip-path:polygon(65% 0,100% 0,100% 100%,0 100%);opacity:.9;z-index:1}
-.theme-9 .main{width:310px;left:16px}
-.theme-9 .mini{border-left-width:1px;border-bottom-width:1px}.theme-9 .mini:after{width:8px;opacity:.82;clip-path:polygon(72% 0,100% 0,100% 100%,28% 100%)}
-.theme-9 .main .content,.theme-9 .mini span,.theme-9 .mini b{position:relative;z-index:2}
-/* 11 Top Rail */
-.theme-10 .panel{background:var(--panel-bg);border-top:3px solid var(--panel-accent);border-bottom:1px solid color-mix(in srgb,var(--panel-accent) 45%,transparent);border-radius:4px}
-.theme-10 .main{width:308px;left:17px}.theme-10 .mini{border-top-width:2px}
-/* 12 Pulse Cut */
-.theme-11 .panel{position:absolute;background:var(--panel-bg);border:1px solid #ffffff24;border-radius:12px 3px 12px 3px;box-shadow:inset 4px 0 var(--panel-accent),inset -1px 0 #ffffff18}
-.theme-11 .panel:before{content:'';position:absolute;left:16px;top:0;width:72px;height:3px;background:var(--panel-accent);border-radius:0 0 3px 3px}
-.theme-11 .panel:after{content:'';position:absolute;right:10px;bottom:7px;width:22px;height:2px;background:color-mix(in srgb,var(--panel-accent) 70%,transparent)}
-.theme-11 .main{width:298px;left:22px}
-.theme-11 .mini{border-radius:8px 2px 8px 2px;box-shadow:inset 2px 0 var(--panel-accent)}.theme-11 .mini:before{left:10px;top:0;width:26px;height:2px}.theme-11 .mini:after{right:4px;bottom:4px;width:7px;height:1px}
-
-
-/* 13 Side Dock */
-.theme-12 .panel{position:absolute;background:linear-gradient(90deg,color-mix(in srgb,var(--panel-accent) 18%,var(--panel-bg)) 0 18%,var(--panel-bg) 18% 100%);border:1px solid #ffffff20;border-radius:6px;box-shadow:inset 4px 0 var(--panel-accent)}
-.theme-12 .panel:after{content:'';position:absolute;right:10px;top:10px;width:3px;height:calc(100% - 20px);background:var(--panel-accent);opacity:.8;border-radius:2px}
-.theme-12 .main{width:304px;left:19px}
-.theme-12 .mini{border-radius:5px;box-shadow:inset 3px 0 var(--panel-accent)}
-.theme-12 .mini:after{right:5px;top:6px;height:calc(100% - 12px);width:2px}
-
-/* 14 Crown Rail */
-.theme-13 .panel{position:absolute;background:var(--panel-bg);border:1px solid #ffffff1c;clip-path:polygon(10px 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%,0 10px)}
-.theme-13 .panel:before{content:'';position:absolute;left:18%;right:18%;top:0;height:4px;background:var(--panel-accent);clip-path:polygon(8px 0,calc(100% - 8px) 0,100% 100%,0 100%)}
-.theme-13 .panel:after{content:'';position:absolute;left:10px;right:10px;bottom:0;height:2px;background:linear-gradient(90deg,transparent,var(--panel-accent),transparent);opacity:.8}
-.theme-13 .main{width:306px;left:18px}
-.theme-13 .mini:before{left:22%;right:22%;height:3px}
-.theme-13 .mini:after{left:6px;right:6px;height:1px}
-
-
-/* Edit-only hit zones. Red border is a separate Electron guide window. */
-.handle{display:none;position:absolute;z-index:20;width:16px;height:16px}.edit .handle{display:block}.nw{left:0;top:0;cursor:nwse-resize}.ne{right:0;top:0;cursor:nesw-resize}.sw{left:0;bottom:0;cursor:nesw-resize}.se{right:0;bottom:0;cursor:nwse-resize}.edit{cursor:move}
-</style></head><body><div id="root"><div id="main" class="panel main"><div class="content"><span id="name" class="name"></span><span id="value" class="value"></span></div></div><div id="mini1" class="panel mini"><span id="mini1Name"></span><b id="mini1Value"></b></div><div id="mini2" class="panel mini"><span id="mini2Name"></span><b id="mini2Value"></b></div><i class="handle nw" data-edge="nw"></i><i class="handle ne" data-edge="ne"></i><i class="handle sw" data-edge="sw"></i><i class="handle se" data-edge="se"></i></div><script>
-const api={get:async()=>({state:await fetch('/state',{cache:'no-store'}).then(r=>r.json())}),onState:cb=>setInterval(async()=>{try{cb(await fetch('/state',{cache:'no-store'}).then(r=>r.json()))}catch{}},150),onEdit:()=>{},dragStart:()=>{},dragMove:()=>{},dragEnd:()=>{},resizeStart:()=>{},resizeMove:()=>{},resizeEnd:()=>{}};
-</script><script>
-const root=document.getElementById('root'),main=document.getElementById('main');
-const nameEl=document.getElementById('name'),valueEl=document.getElementById('value');
-const mini1=document.getElementById('mini1'),mini2=document.getElementById('mini2');
-const mini1Name=document.getElementById('mini1Name'),mini1Value=document.getElementById('mini1Value');
-const mini2Name=document.getElementById('mini2Name'),mini2Value=document.getElementById('mini2Value');
-function setPanelVars(el,bg,accent,nameColor,valueColor){el.style.setProperty('--panel-bg',bg);el.style.setProperty('--panel-accent',accent);el.style.setProperty('--mini-name',nameColor);el.style.setProperty('--mini-value',valueColor)}
-function posMini(el,x,y,baseY){const left=15+(Math.max(0,Math.min(100,+x||0))/100)*(350-15-127-10);const top=baseY+(Math.max(0,Math.min(100,+y||0))/100)*(285-baseY-34);el.style.left=Math.round(left)+'px';el.style.top=Math.round(top)+'px'}
-function draw(S){const s=S.streak;root.className='theme-'+Math.max(0,Math.min(13,+s.style||0))+(s.shadow?' shadow':'');root.style.setProperty('--opacity',Math.max(.15,Math.min(1,+s.opacity||1)));root.style.setProperty('--name-font',s.fontName||'Segoe UI');root.style.setProperty('--value-font',s.fontValue||'Impact');root.style.setProperty('--name-size',(+s.nameSize||18)+'px');root.style.setProperty('--value-size',(+s.valueSize||36)+'px');root.style.setProperty('--name-weight',s.bold?900:600);root.style.setProperty('--name-color',s.nameColor||'#fff');root.style.setProperty('--value-color',s.valueColor||'#d7b84a');root.style.setProperty('--name-x',(+s.nameX||0)+'px');root.style.setProperty('--value-x',(+s.valueX||0)+'px');setPanelVars(main,s.bg1||'#15191f',s.accent||'#d7b84a',s.nameColor,s.valueColor);nameEl.textContent=s.title||'WIN STREAK';valueEl.textContent=String(Math.max(0,Number(s.value)||0));const glow=Math.max(0,Math.min(100,+s.glow||0))/100*7;nameEl.style.textShadow=glow?`0 0 ${glow}px ${s.nameColor}`:'none';valueEl.style.textShadow=glow?`0 0 ${glow}px ${s.valueColor}`:'none';mini1.style.display=s.recordShow?'flex':'none';mini2.style.display=s.record2Show?'flex':'none';mini1Name.textContent=s.recordTitle||'';mini1Value.textContent=String(Math.max(0,Number(s.recordValue)||0));mini2Name.textContent=s.record2Title||'';mini2Value.textContent=String(Math.max(0,Number(s.record2Value)||0));setPanelVars(mini1,s.recordBg||'#15191f',s.recordAccent||'#d7b84a',s.recordNameColor||'#fff',s.recordValueColor||'#d7b84a');setPanelVars(mini2,s.record2Bg||'#15191f',s.record2Accent||'#d7b84a',s.record2NameColor||'#fff',s.record2ValueColor||'#d7b84a');mini1Name.style.textShadow=glow?`0 0 ${glow}px ${s.recordNameColor}`:'none';mini1Value.style.textShadow=glow?`0 0 ${glow}px ${s.recordValueColor}`:'none';mini2Name.style.textShadow=glow?`0 0 ${glow}px ${s.record2NameColor}`:'none';mini2Value.style.textShadow=glow?`0 0 ${glow}px ${s.record2ValueColor}`:'none';posMini(mini1,s.recordX,s.recordY,96);posMini(mini2,s.record2X,s.record2Y,96)}
-api.get().then(x=>draw(x.state));api.onState(draw);
-let editMode=false;api.onEdit(v=>{editMode=v;root.classList.toggle('edit',v)});
-root.addEventListener('pointerdown',e=>{if(!editMode||e.target.closest('.handle'))return;e.preventDefault();root.setPointerCapture?.(e.pointerId);api.dragStart('streak',{x:e.screenX,y:e.screenY})});
-root.addEventListener('pointermove',e=>{if(editMode&&root.hasPointerCapture?.(e.pointerId))api.dragMove({x:e.screenX,y:e.screenY})});
-function endDrag(e){if(root.hasPointerCapture?.(e.pointerId))root.releasePointerCapture?.(e.pointerId);api.dragEnd()}root.addEventListener('pointerup',endDrag);root.addEventListener('pointercancel',endDrag);
-document.querySelectorAll('.handle').forEach(el=>el.addEventListener('pointerdown',e=>{if(!editMode)return;e.stopPropagation();e.preventDefault();el.setPointerCapture?.(e.pointerId);api.resizeStart('streak',el.dataset.edge,{x:e.screenX,y:e.screenY});const mv=ev=>api.resizeMove({x:ev.screenX,y:ev.screenY});const up=ev=>{el.releasePointerCapture?.(ev.pointerId);el.removeEventListener('pointermove',mv);el.removeEventListener('pointerup',up);api.resizeEnd()};el.addEventListener('pointermove',mv);el.addEventListener('pointerup',up)}));
+*{box-sizing:border-box}html,body{margin:0;width:350px;height:285px;overflow:hidden;background:transparent}#streakRoot{width:350px;height:285px}
+</style><link rel="stylesheet" href="/streak-render.css"></head><body><div id="streakRoot" class="streak-widget"></div>
+<script src="/streak-render.js"></script><script>
+let last='';
+async function draw(){try{const S=await fetch('/state',{cache:'no-store'}).then(r=>r.json());const key=JSON.stringify(S.streak);if(key!==last){last=key;StreakRenderer.apply(streakRoot,S)}}catch{}}
+setInterval(draw,250);draw();
 </script></body></html>

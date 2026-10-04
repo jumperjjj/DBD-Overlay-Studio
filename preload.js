@@ -23,7 +23,11 @@ contextBridge.exposeInMainWorld('api', {
   onEdit: cb => ipcRenderer.on('edit', (_, v) => cb(v)),
   onDirty: cb => ipcRenderer.on('dirty', (_, v) => cb(v)),
 
-  // Beta 2.0.0 — 1v1 Timer API
+  // WinStreak v2
+  streakSetLocked: locked => ipcRenderer.invoke('streak-lock', !!locked),
+  onStreakLock: cb => ipcRenderer.on('streak-lock-state', (_, v) => cb(!!v)),
+
+  // 1v1 Timer API
   timerGet: () => ipcRenderer.invoke('timer-get'),
   timerPatch: patch => ipcRenderer.invoke('timer-patch', patch),
   timerAction: () => ipcRenderer.invoke('timer-action'),
@@ -36,13 +40,22 @@ contextBridge.exposeInMainWorld('api', {
   onTimerEdit: cb => ipcRenderer.on('timer-edit', (_, v) => cb(v))
 });
 
-// Inject the timer control tab into the existing app without touching the large
-// legacy app.html. This keeps WinStreak and Confronto stable while Beta 2.0.0 is tested.
+// Keep the Timer injection untouched, then layer the WinStreak v2 controls on
+// top of the legacy WinStreak page after the Timer tab is ready.
 window.addEventListener('DOMContentLoaded', () => {
   try {
     if (!window.location.pathname.toLowerCase().endsWith('/app.html')) return;
-    const script = document.createElement('script');
-    script.src = 'timer-ui.js';
-    document.body.appendChild(script);
+    const addStreakV2 = () => {
+      if (document.querySelector('script[data-streak-v2]')) return;
+      const streak = document.createElement('script');
+      streak.src = 'streak-ui-v2.js';
+      streak.dataset.streakV2 = '1';
+      document.body.appendChild(streak);
+    };
+    const timer = document.createElement('script');
+    timer.src = 'timer-ui.js';
+    timer.addEventListener('load', addStreakV2, { once: true });
+    timer.addEventListener('error', addStreakV2, { once: true });
+    document.body.appendChild(timer);
   } catch {}
 });
