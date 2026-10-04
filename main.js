@@ -18,24 +18,26 @@ let ui, streakWin, matchWin, streakGuide, matchGuide, tray, server;
 let quitting = false;
 let editing = false;
 let lastHotkey = 0;
+let streakIncrementTimer = null;
+let streakPulseSeq = 0;
 let dragSession = null;
 let resizeSession = null;
 const directMoveSaveTimers = { streak: null, match: null };
 
 const DEF = {
-  schema: 281,
+  schema: 282,
   language: 'pt',
   uiTheme: 'dark',
   uiSize: 'standard',
   quickPalette: true,
   streak: {
-    enabled: false, x: 40, y: 40, scale: 1,
+    enabled: false, x: 40, y: 40, scale: 0.8,
     style: 0, title: 'WIN STREAK', value: 0,
-    streakV3: 1, mode: 'killer', customText: '', killerImage: '', survivorImage: '', survivorVisual: false,
+    streakV3: 1, mode: 'killer', customText: '', survivorStreakText: 'WIN STREAK', killerImage: '', survivorImage: '', survivorVisual: false,
     killerStreaks: {}, killerRecords: {}, survivorValue: 0, survivorRecord: 0,
     nameColor: '#ffffff', valueColor: '#d7b84a', accent: '#f97316', bg1: '#0d1118',
     opacity: 1, nameSize: 18, valueSize: 36, nameX: 0, valueX: 0,
-    bold: true, shadow: true, glow: 8,
+    bold: true, shadow: true, glow: 70,
     fontName: 'Segoe UI', fontValue: 'Impact', hotkey: '',
     recordShow: false, recordTitle: 'RECORD', recordValue: 0,
     recordNameColor: '#ffffff', recordValueColor: '#d7b84a', recordBg: '#15191f', recordAccent: '#d7b84a', recordX: 0, recordY: 0,
@@ -86,7 +88,7 @@ function loadState() {
         S.match.rows = DEF.match.rows.map((r, i) => ({ ...r, ...(saved.match.rows[i] || {}) }));
       }
       if (savedSchema < 272 && Number(S.streak.record2Y) === 0) S.streak.record2Y = 25;
-      S.schema = 281;
+      S.schema = 282;
     }
   } catch {}
   normalizeState();
@@ -121,6 +123,7 @@ function normalizeState() {
   S.streak.style = clampInt(S.streak.style, 0, 3);
   S.streak.mode = S.streak.mode === 'survivor' ? 'survivor' : 'killer';
   S.streak.customText = String(S.streak.customText || '').slice(0, 32);
+  S.streak.survivorStreakText = String(S.streak.survivorStreakText || 'WIN STREAK').slice(0, 24);
   S.streak.killerImage = String(S.streak.killerImage || '');
   S.streak.survivorImage = String(S.streak.survivorImage || '');
   S.streak.survivorVisual = !!S.streak.survivorVisual;
@@ -146,7 +149,16 @@ function normalizeState() {
 function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
 function clampInt(v, min, max) { return Math.round(clamp(Number(v) || 0, min, max)); }
 function saveState() {
-  try { fs.writeFileSync(settingsFile(), JSON.stringify(S, null, 2)); } catch {}
+  try {
+    const persisted = clone(S);
+    if (persisted.streak) {
+      delete persisted.streak.pulsePending;
+      delete persisted.streak.pulseId;
+      delete persisted.streak.pulseDelta;
+      delete persisted.streak.pulseStartedAt;
+    }
+    fs.writeFileSync(settingsFile(), JSON.stringify(persisted, null, 2));
+  } catch {}
   pushState();
 }
 function pushState() {
@@ -214,6 +226,41 @@ function updateRecordFromStreak() {
   const record = currentStreakRecord();
   if (value > record) setCurrentStreakRecord(value);
   else S.streak.recordValue = record;
+}
+
+function beginStreakPlusPulse() {
+  if (S.streak.pulsePending) return false;
+  const target = { mode: S.streak.mode === 'survivor' ? 'survivor' : 'killer', killerImage: String(S.streak.killerImage || '') };
+  S.streak.pulsePending = true;
+  S.streak.pulseId = ++streakPulseSeq;
+  S.streak.pulseDelta = 1;
+  S.streak.pulseStartedAt = Date.now();
+  pushState();
+  clearTimeout(streakIncrementTimer);
+  streakIncrementTimer = setTimeout(() => {
+    if (target.mode === 'survivor') {
+      const next = Math.max(0, Math.floor(Number(S.streak.survivorValue) || 0)) + 1;
+      S.streak.survivorValue = next;
+      if (next > Math.max(0, Math.floor(Number(S.streak.survivorRecord) || 0))) S.streak.survivorRecord = next;
+    } else if (target.killerImage) {
+      const values = { ...(S.streak.killerStreaks || {}) };
+      const records = { ...(S.streak.killerRecords || {}) };
+      const next = Math.max(0, Math.floor(Number(values[target.killerImage]) || 0)) + 1;
+      values[target.killerImage] = next;
+      if (next > Math.max(0, Math.floor(Number(records[target.killerImage]) || 0))) records[target.killerImage] = next;
+      S.streak.killerStreaks = values;
+      S.streak.killerRecords = records;
+    } else {
+      S.streak.value = Math.max(0, Math.floor(Number(S.streak.value) || 0)) + 1;
+      S.streak.recordValue = Math.max(S.streak.recordValue || 0, S.streak.value);
+    }
+    S.streak.pulsePending = false;
+    S.streak.pulseDelta = 0;
+    S.streak.pulseStartedAt = 0;
+    syncCurrentStreakBucket();
+    saveState();
+  }, 3000);
+  return true;
 }
 
 function matchTitleSpace() {
@@ -448,11 +495,9 @@ function hotkey(k) {
   globalShortcut.unregisterAll();
   const action = () => {
     const now = Date.now();
-    if (now - lastHotkey < 1000) return;
+    if (S.streak.pulsePending || now - lastHotkey < 1000) return;
     lastHotkey = now;
-    setCurrentStreakValue(currentStreakValue() + 1);
-    updateRecordFromStreak();
-    saveState();
+    beginStreakPlusPulse();
   };
   if (next) {
     if (global.__dbdIsMouseAccel?.(next)) {
@@ -570,8 +615,14 @@ ipcMain.handle('patch', (_, section, patch) => {
 });
 ipcMain.handle('reset', (_, section) => { section === 'streak' ? resetStreak() : resetMatch(); return S; });
 ipcMain.handle('streak-value', (_, mode, n) => {
+  const delta = Number(n) || 0;
+  if (mode === 'delta' && delta > 0) {
+    beginStreakPlusPulse();
+    return S;
+  }
+  if (S.streak.pulsePending) return S;
   let v = Math.max(0, Number(S.streak.value) || 0);
-  if (mode === 'delta') v = Math.max(0, v + (Number(n) || 0));
+  if (mode === 'delta') v = Math.max(0, v + delta);
   else v = Math.max(0, Number(n) || 0);
   setCurrentStreakValue(Math.floor(v));
   updateRecordFromStreak();
@@ -647,5 +698,5 @@ if (!gotSingleInstanceLock) {
     loadState(); startServer(); createAll(); if (S.streak.hotkey) hotkey(S.streak.hotkey); setTimeout(pushState, 300);
   });
 }
-app.on('before-quit', () => { quitting = true; clearTimeout(directMoveSaveTimers.streak); clearTimeout(directMoveSaveTimers.match); globalShortcut.unregisterAll(); server?.close(); });
+app.on('before-quit', () => { quitting = true; clearTimeout(streakIncrementTimer); clearTimeout(directMoveSaveTimers.streak); clearTimeout(directMoveSaveTimers.match); globalShortcut.unregisterAll(); server?.close(); });
 app.on('window-all-closed', () => { if (quitting) app.quit(); });

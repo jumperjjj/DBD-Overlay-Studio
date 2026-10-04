@@ -3,7 +3,7 @@
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent}
 .streak-widget{position:relative;width:400px;height:230px;color:#f7f8fa;--accent:#f97316;--panel:rgba(13,17,24,.965);--panel-soft:rgba(30,36,45,.925);--border:rgba(255,255,255,.14);font-family:Bahnschrift,"Segoe UI",Arial,sans-serif;font-variant-numeric:tabular-nums;user-select:none}
 .streak-widget.survivor-visual-off{width:266px}
-.streak-card{position:absolute;left:6px;top:20px;width:calc(100% - 12px);height:188px;border:1px solid var(--border);border-radius:14px;background:linear-gradient(116deg,var(--panel),var(--panel-soft));box-shadow:0 11px 28px rgba(0,0,0,.34),inset 0 1px rgba(255,255,255,.035);overflow:hidden;display:grid;grid-template-columns:156px minmax(0,1fr)}
+.streak-card{position:absolute;left:6px;top:20px;width:calc(100% - 12px);height:188px;border:1px solid var(--border);border-radius:14px;background:linear-gradient(116deg,var(--panel),var(--panel-soft));box-shadow:0 11px 28px var(--card-shadow,rgba(0,0,0,.34)),inset 0 1px rgba(255,255,255,.035);overflow:hidden;display:grid;grid-template-columns:156px minmax(0,1fr)}
 .streak-card:before{content:"";position:absolute;z-index:6;left:0;top:11px;bottom:11px;width:4px;border-radius:0 5px 5px 0;background:var(--accent);box-shadow:0 0 14px color-mix(in srgb,var(--accent) 58%,transparent);pointer-events:none}
 .visual-side{position:relative;min-width:0;overflow:hidden;background:radial-gradient(circle at 36% 58%,color-mix(in srgb,var(--accent) 16%,transparent),transparent 57%),linear-gradient(145deg,color-mix(in srgb,var(--accent) 9%,transparent),transparent 64%)}
 .visual-side:after{content:"";position:absolute;z-index:1;right:0;top:0;bottom:0;width:1px;background:linear-gradient(transparent,rgba(255,255,255,.12),transparent)}
@@ -15,14 +15,22 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent
 .custom-line{width:100%;min-height:14px;margin-bottom:4px;color:#b6bec9;font-size:9px;font-weight:800;letter-spacing:1.55px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;filter:var(--text-filter,none)}
 .custom-line.empty{visibility:hidden}
 .entity-name{width:100%;margin-bottom:5px;color:#fff;font-size:18px;font-weight:900;line-height:1.05;letter-spacing:1.15px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:var(--white-glow);filter:var(--text-filter,none)}
-.mode-survivor .entity-name{font-size:19px;letter-spacing:2px}
-.streak-value{color:var(--accent);font-size:64px;font-weight:900;line-height:.90;letter-spacing:-1.5px;text-shadow:0 0 10px color-mix(in srgb,var(--accent) 58%,transparent),0 3px 8px rgba(0,0,0,.78);filter:var(--text-filter,none)}
+.mode-survivor .entity-name{font-size:22px;letter-spacing:1.55px}
+.mode-killer .entity-name.long-name{font-size:15.5px;letter-spacing:.72px}
+.style-1.mode-killer .entity-name.very-long-name,.style-2.mode-killer .entity-name.very-long-name,.style-4.mode-killer .entity-name.very-long-name{font-size:14.2px;letter-spacing:.4px;overflow:visible;text-overflow:clip}
+.mode-killer .entity-name{margin-bottom:1px}
+.mode-killer .value-wrap{margin-top:6px}
+.value-wrap{position:relative;display:flex;align-items:center;justify-content:center;min-height:58px}
+.streak-value{position:relative;z-index:1;color:var(--accent);font-size:64px;font-weight:900;line-height:.90;letter-spacing:-1.5px;text-shadow:0 0 10px color-mix(in srgb,var(--accent) 58%,transparent),0 3px 8px rgba(0,0,0,.78);filter:var(--text-filter,none)}
+.streak-pulse{position:absolute;z-index:4;left:50%;top:50%;opacity:0;pointer-events:none;color:#fff;font-size:30px;font-weight:950;line-height:1;letter-spacing:-.5px;text-shadow:0 0 7px #fff,0 0 15px color-mix(in srgb,var(--accent) 88%,transparent),0 4px 9px rgba(0,0,0,.88);transform:translate(-50%,-50%) scale(.6)}
+.streak-pulse.play{animation:streakPlusPulse 2s cubic-bezier(.2,.75,.25,1) both}
+@keyframes streakPlusPulse{0%{opacity:0;transform:translate(-50%,-46%) scale(.55)}14%{opacity:1;transform:translate(-50%,-50%) scale(1.18)}30%{opacity:1;transform:translate(-50%,-50%) scale(.96)}55%{opacity:1;transform:translate(-50%,-55%) scale(1.04)}78%{opacity:.72;transform:translate(-50%,-70%) scale(1.08)}100%{opacity:0;transform:translate(-50%,-105%) scale(1.16)}}
 .record-chip{margin-top:10px;min-width:122px;min-height:27px;padding:4px 12px 3px;border:1px solid color-mix(in srgb,var(--accent) 58%,#ffffff18);border-radius:8px;background:rgba(0,0,0,.23);display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:inset 0 1px rgba(255,255,255,.035);filter:var(--text-filter,none)}
 .record-chip span{font-size:9px;font-weight:850;letter-spacing:1.45px;color:#a5adba}.record-chip b{font-size:15px;line-height:1;color:#fff;font-weight:900}
 .mode-survivor.survivor-visual-off .streak-card{grid-template-columns:1fr}
 .mode-survivor.survivor-visual-off .visual-side{display:none}
 .mode-survivor.survivor-visual-off .streak-main{padding-left:25px;padding-right:25px}
-.mode-survivor.survivor-visual-off .entity-name{font-size:20px}
+.mode-survivor.survivor-visual-off .entity-name{font-size:23px}
 
 /* Style 1 — rounded glass, faithful to the first approved concept. */
 .style-1 .streak-card{border-radius:14px;background:linear-gradient(112deg,color-mix(in srgb,var(--accent) 4%,var(--panel)),var(--panel-soft) 59%,var(--panel))}
@@ -38,7 +46,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent
 .style-2.mode-survivor.survivor-visual-off .streak-card{clip-path:polygon(0 0,91% 0,100% 16%,100% 100%,9% 100%,0 84%)}
 
 /* Style 3 — rebuilt: slim floating rail with an open portrait and accent underline. */
-.style-3 .streak-card{top:34px;height:158px;border:0;border-radius:12px;background:linear-gradient(90deg,color-mix(in srgb,var(--panel) 93%,transparent),color-mix(in srgb,var(--panel-soft) 86%,transparent));box-shadow:0 10px 25px rgba(0,0,0,.34),0 0 0 1px rgba(255,255,255,.055) inset;overflow:visible;grid-template-columns:142px minmax(0,1fr)}
+.style-3 .streak-card{top:34px;height:158px;border:0;border-radius:12px;background:linear-gradient(90deg,color-mix(in srgb,var(--panel) 93%,transparent),color-mix(in srgb,var(--panel-soft) 86%,transparent));box-shadow:0 10px 25px var(--card-shadow,rgba(0,0,0,.34)),0 0 0 1px rgba(255,255,255,.055) inset;overflow:visible;grid-template-columns:142px minmax(0,1fr)}
 .style-3 .streak-card:before{left:18px;right:18px;top:auto;bottom:-1px;width:auto;height:2px;border-radius:4px;background:linear-gradient(90deg,transparent,var(--accent) 18%,var(--accent) 82%,transparent);box-shadow:0 0 10px color-mix(in srgb,var(--accent) 40%,transparent)}
 .style-3 .visual-side{overflow:visible;background:transparent}
 .style-3 .visual-side:after{display:none}
@@ -49,7 +57,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent
 .style-3 .streak-main{padding:10px 14px 9px;justify-content:center}
 .style-3 .custom-line{font-size:8px;margin-bottom:2px;letter-spacing:1.7px}
 .style-3 .entity-name{font-size:16px;margin-bottom:4px}
-.style-3 .streak-value{font-size:57px;line-height:.86}
+.style-3 .value-wrap{min-height:50px}.style-3 .streak-value{font-size:57px;line-height:.86}
 .style-3 .record-chip{margin-top:7px;min-width:112px;min-height:22px;padding:3px 10px;border:0;border-top:1px solid color-mix(in srgb,var(--accent) 72%,transparent);border-radius:0;background:transparent;box-shadow:none}
 .style-3 .record-chip span{font-size:8px}.style-3 .record-chip b{font-size:13px}
 .style-3.mode-survivor.survivor-visual-off .streak-card{top:39px;height:150px;border-radius:14px;background:linear-gradient(110deg,color-mix(in srgb,var(--panel) 96%,transparent),color-mix(in srgb,var(--panel-soft) 84%,transparent))}
@@ -57,7 +65,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent
 .style-3.mode-survivor.survivor-visual-off .streak-value{font-size:60px}
 
 /* Style 4 — rebuilt: premium framed card with cut corners and layered inner frame. */
-.style-4 .streak-card{top:16px;height:196px;border:1px solid color-mix(in srgb,var(--accent) 34%,rgba(255,255,255,.20));border-radius:18px;clip-path:polygon(14px 0,calc(100% - 14px) 0,100% 14px,100% calc(100% - 14px),calc(100% - 14px) 100%,14px 100%,0 calc(100% - 14px),0 14px);background:linear-gradient(122deg,color-mix(in srgb,var(--accent) 9%,var(--panel)),var(--panel) 45%,color-mix(in srgb,var(--panel-soft) 95%,var(--accent) 5%));box-shadow:0 14px 32px rgba(0,0,0,.40),0 0 20px color-mix(in srgb,var(--accent) 10%,transparent);grid-template-columns:164px minmax(0,1fr)}
+.style-4 .streak-card{top:16px;height:196px;border:1px solid color-mix(in srgb,var(--accent) 34%,rgba(255,255,255,.20));border-radius:18px;clip-path:polygon(14px 0,calc(100% - 14px) 0,100% 14px,100% calc(100% - 14px),calc(100% - 14px) 100%,14px 100%,0 calc(100% - 14px),0 14px);background:linear-gradient(122deg,color-mix(in srgb,var(--accent) 9%,var(--panel)),var(--panel) 45%,color-mix(in srgb,var(--panel-soft) 95%,var(--accent) 5%));box-shadow:0 14px 32px var(--card-shadow,rgba(0,0,0,.40)),0 0 20px color-mix(in srgb,var(--accent) 10%,transparent);grid-template-columns:164px minmax(0,1fr)}
 .style-4 .streak-card:before{left:0;top:18px;bottom:18px;width:5px;border-radius:0 7px 7px 0;background:linear-gradient(var(--accent),color-mix(in srgb,var(--accent) 55%,#fff),var(--accent));box-shadow:0 0 15px color-mix(in srgb,var(--accent) 68%,transparent)}
 .style-4 .streak-card:after{content:"";position:absolute;z-index:5;inset:6px;border:1px solid rgba(255,255,255,.045);clip-path:polygon(10px 0,calc(100% - 10px) 0,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0 calc(100% - 10px),0 10px);pointer-events:none}
 .style-4 .visual-side{background:radial-gradient(circle at 46% 45%,color-mix(in srgb,var(--accent) 22%,transparent),transparent 56%),linear-gradient(145deg,color-mix(in srgb,var(--accent) 15%,#0b0d12),transparent 68%)}
@@ -66,10 +74,14 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent
 .style-4 .survivor-img{width:170px;height:190px}
 .style-4 .streak-main:before,.style-4 .streak-main:after{content:"";position:absolute;left:22px;right:22px;height:1px;background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--accent) 48%,transparent),transparent);pointer-events:none}
 .style-4 .streak-main:before{top:13px}.style-4 .streak-main:after{bottom:13px}
-.style-4 .entity-name{font-size:19px}.style-4 .streak-value{font-size:66px}
+.style-4 .entity-name{font-size:19px}.style-4 .value-wrap{min-height:61px}.style-4 .streak-value{font-size:66px}
 .style-4 .record-chip{border-color:color-mix(in srgb,var(--accent) 78%,transparent);border-radius:11px;box-shadow:0 0 11px color-mix(in srgb,var(--accent) 11%,transparent),inset 0 1px rgba(255,255,255,.045)}
 .style-4.mode-survivor.survivor-visual-off .streak-card{grid-template-columns:1fr}
 .style-4.mode-survivor.survivor-visual-off .streak-main{padding-left:27px;padding-right:27px}
 .style-4.mode-survivor.survivor-visual-off .streak-main:before,.style-4.mode-survivor.survivor-visual-off .streak-main:after{left:34px;right:34px}
 
 .zero-opacity .streak-card{background:transparent!important;border-color:transparent!important;box-shadow:none!important}.zero-opacity .visual-side{background:transparent!important}.zero-opacity .visual-frame{background:transparent!important;border-color:transparent!important;box-shadow:none!important}.zero-opacity .record-chip{background:transparent!important}
+/* Survivor label remains intentionally larger in the compact/alternate layouts. */
+.style-3.mode-survivor .entity-name{font-size:20px;letter-spacing:1.35px}
+.style-3.mode-survivor.survivor-visual-off .entity-name{font-size:21px}
+.style-4.mode-survivor .entity-name{font-size:22px;letter-spacing:1.45px}
