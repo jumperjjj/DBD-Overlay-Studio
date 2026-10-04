@@ -1,0 +1,29 @@
+DBD Overlay Studio — Beta 2.0.4
+
+FOCO DESTA VERSÃO
+Reformulação e polimento do 1v1 Timer e WinStreak antes da próxima etapa da aba Confronto.
+
+WINSTREAK
+- 4 estilos visuais: Glass, Split, Minimal e Premium.
+- Killer e Survivor com layouts adaptados separadamente.
+- Portraits de Killers e Survivors integrados.
+- Survivor pode usar a overlay com ou sem portrait.
+- Texto superior independente para Killer e Survivor.
+- Texto principal de Survivor editável (padrão: WIN STREAK).
+- Streak atual e recorde salvos separadamente para cada Killer.
+- Survivor usa streak/recorde geral.
+- Aplicar valor exato com confirmação e limpeza automática do campo após confirmar.
+- Animação +1 com efeito visual e som de pontuação.
+- Ajustes de legibilidade para fundo transparente, número, RECORD e texto superior.
+- Ajustes de escala, sombreamento, glow, fontes e nomes longos de Killers.
+- Ghost Face sem “THE” e suporte melhor para nomes longos como The Skull Merchant.
+- Minimal recebeu refinamentos de posição do RECORD.
+- Remoção de sombras externas indesejadas em layouts.
+
+1V1 TIMER / INTERFACE
+- Refinamentos visuais dos overlays e botões.
+- Estados de Mostrar/Ocultar e Desbloquear overlay destacados conforme o tema da interface.
+- Ajustes de sombras externas nos estilos aplicáveis.
+
+PRÓXIMA ETAPA
+- Reformulação completa da aba Confronto seguindo a mesma identidade visual do 1v1 Timer e WinStreak.
