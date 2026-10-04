@@ -67,7 +67,8 @@
     root.style.setProperty('--border',`rgba(255,255,255,${(.14*opacity).toFixed(3)})`);
     root.style.setProperty('--text-filter',shadowStrength<=0?'none':`drop-shadow(0 1px ${(0.6+2.2*shadowPower).toFixed(2)}px rgba(0,0,0,${Math.min(.88,0.20+0.48*shadowPower).toFixed(3)}))`);
     root.style.setProperty('--white-glow',shadowStrength<=0?'none':`0 0 ${(2+6*shadowPower).toFixed(1)}px rgba(255,255,255,${Math.min(.46,0.12+0.25*shadowPower).toFixed(2)}),0 2px 5px rgba(0,0,0,.78)`);
-    root.style.setProperty('--card-shadow',shadowStrength<=0?'rgba(0,0,0,0)':`rgba(0,0,0,${Math.min(.60,.26+.26*shadowPower).toFixed(3)})`);
+    // The shadow slider is text-only. Keep the overlay/card shadow fixed so borders and panels never change with this control.
+    root.style.setProperty('--card-shadow','rgba(0,0,0,.34)');
 
     const killer=root.querySelector('.killer-img'),survivor=root.querySelector('.survivor-img'),empty=root.querySelector('.visual-empty');
     killer.style.display='none';survivor.style.display='none';empty.style.display='none';
