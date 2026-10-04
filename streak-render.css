@@ -36,7 +36,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent
 .mode-survivor.survivor-visual-off .entity-name{font-size:25px}
 
 /* Style 1 — rounded glass, faithful to the first approved concept. */
-.style-1 .streak-card{border-radius:14px;background:linear-gradient(112deg,color-mix(in srgb,var(--accent) 4%,var(--panel)),var(--panel-soft) 59%,var(--panel))}
+.style-1 .streak-card{border-radius:14px;background:linear-gradient(112deg,color-mix(in srgb,var(--accent) 4%,var(--panel)),var(--panel-soft) 59%,var(--panel));box-shadow:inset 0 1px rgba(255,255,255,.035)}
 .style-1 .visual-side{background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 11%,transparent),transparent 72%)}
 .style-1 .visual-frame{border-color:transparent}
 
@@ -49,7 +49,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent
 .style-2.mode-survivor.survivor-visual-off .streak-card{clip-path:polygon(0 0,91% 0,100% 16%,100% 100%,9% 100%,0 84%)}
 
 /* Style 3 — rebuilt: slim floating rail with an open portrait and accent underline. */
-.style-3 .streak-card{top:34px;height:158px;border:0;border-radius:12px;background:linear-gradient(90deg,color-mix(in srgb,var(--panel) 93%,transparent),color-mix(in srgb,var(--panel-soft) 86%,transparent));box-shadow:0 10px 25px var(--card-shadow,rgba(0,0,0,.34)),0 0 0 1px rgba(255,255,255,.055) inset;overflow:visible;grid-template-columns:142px minmax(0,1fr)}
+.style-3 .streak-card{top:34px;height:158px;border:0;border-radius:12px;background:linear-gradient(90deg,color-mix(in srgb,var(--panel) 93%,transparent),color-mix(in srgb,var(--panel-soft) 86%,transparent));box-shadow:0 0 0 1px rgba(255,255,255,.055) inset;overflow:visible;grid-template-columns:142px minmax(0,1fr)}
 .style-3 .streak-card:before{left:18px;right:18px;top:auto;bottom:-1px;width:auto;height:2px;border-radius:4px;background:linear-gradient(90deg,transparent,var(--accent) 18%,var(--accent) 82%,transparent);box-shadow:0 0 10px color-mix(in srgb,var(--accent) 40%,transparent)}
 .style-3 .visual-side{overflow:visible;background:transparent}
 .style-3 .visual-side:after{display:none}
