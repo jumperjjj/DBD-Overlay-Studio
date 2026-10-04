@@ -261,8 +261,9 @@ function beginStreakPlusPulse() {
   pushState();
   clearTimeout(streakIncrementCommitTimer);
   clearTimeout(streakIncrementTimer);
-  // The real number changes as the +1 starts its fade-out.
-  streakIncrementCommitTimer = setTimeout(() => commitStreakPlus(target), 1600);
+  // Commit while +1 is already fading, but before the real value is allowed to fade back in.
+  // This avoids ever showing the old value changing into the new one on screen.
+  streakIncrementCommitTimer = setTimeout(() => commitStreakPlus(target), 2150);
   // Keep the full 3 second input lock so the animation cannot be interrupted.
   streakIncrementTimer = setTimeout(() => {
     S.streak.pulsePending = false;

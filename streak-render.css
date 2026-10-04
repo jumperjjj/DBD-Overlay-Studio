@@ -12,27 +12,27 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent
 .survivor-img{width:164px;height:184px}
 .visual-empty{position:absolute;z-index:2;inset:13px 11px;align-items:center;justify-content:center;border:1px solid color-mix(in srgb,var(--accent) 58%,#ffffff22);border-radius:11px;background:linear-gradient(145deg,color-mix(in srgb,var(--accent) 10%,transparent),rgba(255,255,255,.015));color:#eef1f5;font-size:11px;font-weight:900;letter-spacing:1.7px;text-transform:uppercase;text-shadow:0 2px 5px #000}
 .streak-main{position:relative;min-width:0;padding:14px 16px 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
-.custom-line{width:100%;min-height:14px;margin-bottom:4px;color:#b6bec9;font-size:9px;font-weight:800;letter-spacing:1.55px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;filter:var(--text-filter,none)}
+.custom-line{width:100%;min-height:17px;margin-bottom:4px;color:#b6bec9;font-size:12px;font-weight:800;letter-spacing:1.55px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;filter:var(--text-filter,none)}
 .custom-line.empty{visibility:hidden}
 .entity-name{width:100%;margin-bottom:5px;color:#fff;font-size:18px;font-weight:900;line-height:1.05;letter-spacing:1.15px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:var(--white-glow);filter:var(--text-filter,none)}
-.mode-survivor .entity-name{font-size:22px;letter-spacing:1.55px}
+.mode-survivor .entity-name{font-size:24px;letter-spacing:1.55px}
 .mode-killer .entity-name.long-name{font-size:15.5px;letter-spacing:.72px}
 .style-1.mode-killer .entity-name.very-long-name,.style-2.mode-killer .entity-name.very-long-name,.style-4.mode-killer .entity-name.very-long-name{font-size:14.2px;letter-spacing:.4px;overflow:visible;text-overflow:clip}
 .mode-killer .entity-name{margin-bottom:1px}
 .mode-killer .value-wrap{margin-top:6px}
 .value-wrap{position:relative;display:flex;align-items:center;justify-content:center;min-height:58px}
 .streak-value{position:relative;z-index:1;color:var(--accent);font-size:var(--number-size);font-weight:900;line-height:.90;letter-spacing:-1.5px;text-shadow:0 0 10px color-mix(in srgb,var(--accent) 58%,transparent),0 3px 8px rgba(0,0,0,.78);filter:var(--text-filter,none)}
-.streak-pulse{position:absolute;z-index:4;left:50%;top:50%;opacity:0;pointer-events:none;color:#fff;font-size:var(--number-size);font-weight:950;line-height:.90;letter-spacing:-1.5px;text-shadow:0 0 7px #fff,0 0 17px color-mix(in srgb,var(--accent) 88%,transparent),0 4px 9px rgba(0,0,0,.88);transform:translate(-50%,-50%) scale(.08);transform-origin:center center}
-.streak-pulse.play{animation:streakPlusPulse 2.2s cubic-bezier(.22,.72,.22,1) both}
-.pulse-active .streak-value{animation:streakValueDuringPulse 2.2s ease both}
-@keyframes streakPlusPulse{0%{opacity:0;transform:translate(-50%,-50%) scale(.08)}8%{opacity:.9;transform:translate(-50%,-50%) scale(.28)}28%{opacity:1;transform:translate(-50%,-50%) scale(.78)}48%{opacity:1;transform:translate(-50%,-50%) scale(1.08)}62%{opacity:1;transform:translate(-50%,-50%) scale(.98)}70%{opacity:.95;transform:translate(-50%,-50%) scale(1.02)}82%{opacity:.42;transform:translate(-50%,-50%) scale(1.08)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.14)}}
-@keyframes streakValueDuringPulse{0%{opacity:1;transform:scale(1)}6%{opacity:0;transform:scale(.96)}68%{opacity:0;transform:scale(.96)}76%{opacity:.35;transform:scale(.98)}88%{opacity:1;transform:scale(1.02)}100%{opacity:1;transform:scale(1)}}
+.streak-pulse{position:absolute;z-index:4;left:50%;top:50%;opacity:0;pointer-events:none;color:#fff;font-size:var(--number-size);font-weight:950;line-height:.90;letter-spacing:-1.5px;text-shadow:0 0 7px #fff,0 0 17px color-mix(in srgb,var(--accent) 88%,transparent),0 4px 9px rgba(0,0,0,.88);transform:translate3d(-50%,-50%,0) scale(.20);transform-origin:center center;will-change:transform,opacity;backface-visibility:hidden;-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
+.streak-pulse.play{animation:streakPlusPulse 2.70s cubic-bezier(.18,.72,.20,1) both}
+.pulse-active .streak-value{animation:streakValueDuringPulse 2.70s ease both}
+@keyframes streakPlusPulse{0%{opacity:0;transform:translate3d(-50%,-50%,0) scale(.20)}10%{opacity:.92;transform:translate3d(-50%,-50%,0) scale(.36)}24%{opacity:1;transform:translate3d(-50%,-50%,0) scale(.58)}42%{opacity:1;transform:translate3d(-50%,-50%,0) scale(.82)}58%{opacity:1;transform:translate3d(-50%,-50%,0) scale(1)}68%{opacity:1;transform:translate3d(-50%,-50%,0) scale(1.06)}74%{opacity:.98;transform:translate3d(-50%,-50%,0) scale(1.03)}82%{opacity:.66;transform:translate3d(-50%,-50%,0) scale(1.05)}91%{opacity:.26;transform:translate3d(-50%,-50%,0) scale(1.08)}100%{opacity:0;transform:translate3d(-50%,-50%,0) scale(1.10)}}
+@keyframes streakValueDuringPulse{0%{opacity:1;transform:scale(1)}5%{opacity:0;transform:scale(.98)}84%{opacity:0;transform:scale(.98)}88%{opacity:.18;transform:scale(.99)}94%{opacity:.72;transform:scale(1.01)}100%{opacity:1;transform:scale(1)}}
 .record-chip{margin-top:10px;min-width:122px;min-height:27px;padding:4px 12px 3px;border:1px solid color-mix(in srgb,var(--accent) 58%,#ffffff18);border-radius:8px;background:rgba(0,0,0,.23);display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:inset 0 1px rgba(255,255,255,.035)}
-.record-chip span{font-size:9px;font-weight:850;letter-spacing:1.45px;color:#fff;text-shadow:var(--white-glow);filter:var(--text-filter,none)}.record-chip b{font-size:15px;line-height:1;color:#fff;font-weight:900;text-shadow:0 1px 4px rgba(0,0,0,.78);filter:var(--text-filter,none)}
+.record-chip span{font-size:11px;font-weight:850;letter-spacing:1.45px;color:#fff;text-shadow:var(--white-glow);filter:var(--text-filter,none)}.record-chip b{font-size:18px;line-height:1;color:#fff;font-weight:900;text-shadow:0 1px 4px rgba(0,0,0,.78);filter:var(--text-filter,none)}
 .mode-survivor.survivor-visual-off .streak-card{grid-template-columns:1fr}
 .mode-survivor.survivor-visual-off .visual-side{display:none}
 .mode-survivor.survivor-visual-off .streak-main{padding-left:25px;padding-right:25px}
-.mode-survivor.survivor-visual-off .entity-name{font-size:23px}
+.mode-survivor.survivor-visual-off .entity-name{font-size:25px}
 
 /* Style 1 — rounded glass, faithful to the first approved concept. */
 .style-1 .streak-card{border-radius:14px;background:linear-gradient(112deg,color-mix(in srgb,var(--accent) 4%,var(--panel)),var(--panel-soft) 59%,var(--panel))}
@@ -57,11 +57,11 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent
 .style-3 .survivor-img{width:154px;height:171px;top:49%}
 .style-3 .visual-empty{inset:18px 10px;border-style:dashed;background:rgba(255,255,255,.015)}
 .style-3 .streak-main{padding:10px 14px 9px;justify-content:center}
-.style-3 .custom-line{font-size:8px;margin-bottom:2px;letter-spacing:1.7px}
+.style-3 .custom-line{font-size:11px;margin-bottom:2px;letter-spacing:1.7px}
 .style-3 .entity-name{font-size:16px;margin-bottom:4px}
 .style-3{--number-size:57px}.style-3 .value-wrap{min-height:50px}.style-3 .streak-value,.style-3 .streak-pulse{line-height:.86}
 .style-3 .record-chip{margin-top:7px;min-width:112px;min-height:22px;padding:3px 10px;border:0;border-top:1px solid color-mix(in srgb,var(--accent) 72%,transparent);border-radius:0;background:transparent;box-shadow:none}
-.style-3 .record-chip span{font-size:8px}.style-3 .record-chip b{font-size:13px}
+.style-3 .record-chip span{font-size:10px}.style-3 .record-chip b{font-size:16px}
 .style-3.mode-survivor.survivor-visual-off .streak-card{top:39px;height:150px;border-radius:14px;background:linear-gradient(110deg,color-mix(in srgb,var(--panel) 96%,transparent),color-mix(in srgb,var(--panel-soft) 84%,transparent))}
 .style-3.mode-survivor.survivor-visual-off .streak-main{padding:13px 24px 10px}
 .style-3.mode-survivor.survivor-visual-off{--number-size:60px}
@@ -84,6 +84,6 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent
 
 .zero-opacity .streak-card{background:transparent!important;border-color:transparent!important;box-shadow:none!important}.zero-opacity .visual-side{background:transparent!important}.zero-opacity .visual-frame{background:transparent!important;border-color:transparent!important;box-shadow:none!important}.zero-opacity .record-chip{background:transparent!important}
 /* Survivor label remains intentionally larger in the compact/alternate layouts. */
-.style-3.mode-survivor .entity-name{font-size:20px;letter-spacing:1.35px}
-.style-3.mode-survivor.survivor-visual-off .entity-name{font-size:21px}
-.style-4.mode-survivor .entity-name{font-size:22px;letter-spacing:1.45px}
+.style-3.mode-survivor .entity-name{font-size:22px;letter-spacing:1.35px}
+.style-3.mode-survivor.survivor-visual-off .entity-name{font-size:23px}
+.style-4.mode-survivor .entity-name{font-size:24px;letter-spacing:1.45px}
