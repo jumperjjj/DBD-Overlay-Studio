@@ -11,10 +11,23 @@
     demogorgon:'The Demogorgon',huntress:'The Huntress',singularity:'The Singularity',clown:'The Clown',ghostface:'Ghost Face',theghostface:'Ghost Face',
     knight:'The Knight',mastermind:'The Mastermind',darklord:'The Dark Lord',blight:'The Blight'
   };
+  const SURVIVOR_NAMES={
+    acevisconti:'Ace Visconti',adamfrancis:'Adam Francis',adawong:'Ada Wong',aestribaermar:'Aestri Yazar / Baermar Uraz',alanwake:'Alan Wake',
+    ashleyjwilliams:'Ashley J. Williams',aurorastardotter:'Aurora Stardotter',billoverbeck:'William “Bill” Overbeck',cherylmason:'Cheryl Mason',
+    claudettemorel:'Claudette Morel',davidking:'David King',davidtapp:'Detective David Tapp',dustinhenderson:'Dustin Henderson',dwightfairfield:'Dwight Fairfield',
+    eleven:'Eleven',ellenripley:'Ellen Ripley',elodierakoto:'Élodie Rakoto',felixrichter:'Felix Richter',fengmin:'Feng Min',gabrielsoma:'Gabriel Soma',
+    haddiekaur:'Haddie Kaur',jakepark:'Jake Park',janeromero:'Jane Romero',jeffjohansen:'Jeff Johansen',jillvalentine:'Jill Valentine',jonahvasquez:'Jonah Vasquez',
+    katedenson:'Kate Denson',kwontaeyoung:'Kwon Tae-young',laracroft:'Lara Croft',lauriestrode:'Laurie Strode',leonscottkennedy:'Leon S. Kennedy',
+    megthomas:'Meg Thomas',michonnegrimes:'Michonne Grimes',mikaelareid:'Mikaela Reid',nancywheeler:'Nancy Wheeler',neakarlsson:'Nea Karlsson',
+    nicolascage:'Nicolas Cage',orelarose:'Orela Rose',quentinsmith:'Quentin Smith',rebeccachambers:'Rebecca Chambers',renatolyra:'Renato Lyra',
+    rickgrimes:'Rick Grimes',sableward:'Sable Ward',shanewiigwaas:'Shane Wiigwaas',steveharrington:'Steve Harrington',tauriecain:'Taurie Cain',
+    thalitalyra:'Thalita Lyra',trevorbelmont:'Trevor Belmont',veeboonyasak:'Vee Boonyasak',vittoriotoscano:'Vittorio Toscano',yoichiasakawa:'Yoichi Asakawa',
+    yuikimura:'Yui Kimura',yunjinlee:'Yun-Jin Lee',zarinakassir:'Zarina Kassir'
+  };
   function stem(file){return String(file||'').replace(/\.(png|jpe?g|webp)$/i,'').replace(/[_-]+/g,' ').replace(/\s+/g,' ').trim()}
   function titleCase(v){return String(v||'').replace(/\b\w/g,c=>c.toUpperCase())}
   function displayName(file){const raw=stem(file),key=raw.replace(/\s+/g,'').toLowerCase();return KILLER_NAMES[key]||titleCase(raw)||'KILLER'}
-  function survivorName(file){return titleCase(stem(file))||'SURVIVOR'}
+  function survivorName(file){const raw=stem(file),key=raw.replace(/[^a-z0-9]/gi,'').toLowerCase();return SURVIVOR_NAMES[key]||titleCase(raw)||'SURVIVOR'}
   function killerUrl(file){return file?`http://127.0.0.1:17384/killer?name=${encodeURIComponent(file)}`:''}
   function survivorUrl(file){return file?`http://127.0.0.1:17384/survivor?name=${encodeURIComponent(file)}`:''}
   function ensure(root){
@@ -46,7 +59,7 @@
     const mode=s.mode==='survivor'?'survivor':'killer';
     const style=Math.max(0,Math.min(3,Math.floor(Number(s.style)||0)));
     const survivorVisual=mode==='survivor'&&s.survivorVisual===true;
-    root.className=`streak-widget style-${style+1} mode-${mode}${mode==='survivor'&&!survivorVisual?' survivor-visual-off':''}${survivorVisual?' survivor-visual-on':''}${opacity<=.001?' zero-opacity':''}`;
+    root.className=`streak-widget style-${style+1} mode-${mode}${mode==='survivor'&&!survivorVisual?' survivor-visual-off':''}${survivorVisual?' survivor-visual-on':''}${s.pulsePending===true?' pulse-active':''}${opacity<=.001?' zero-opacity':''}`;
     root.style.setProperty('--accent',accent);
     const hex=bg.slice(1),n=parseInt(hex,16),r=(n>>16)&255,g=(n>>8)&255,b=n&255;
     root.style.setProperty('--panel',`rgba(${r},${g},${b},${(.965*opacity).toFixed(3)})`);

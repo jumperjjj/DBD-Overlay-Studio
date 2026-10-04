@@ -19,6 +19,7 @@ let quitting = false;
 let editing = false;
 let lastHotkey = 0;
 let streakIncrementTimer = null;
+let streakIncrementCommitTimer = null;
 let streakPulseSeq = 0;
 let dragSession = null;
 let resizeSession = null;
@@ -228,6 +229,28 @@ function updateRecordFromStreak() {
   else S.streak.recordValue = record;
 }
 
+function commitStreakPlus(target) {
+  if (target.mode === 'survivor') {
+    const next = Math.max(0, Math.floor(Number(S.streak.survivorValue) || 0)) + 1;
+    S.streak.survivorValue = next;
+    if (next > Math.max(0, Math.floor(Number(S.streak.survivorRecord) || 0))) S.streak.survivorRecord = next;
+  } else if (target.killerImage) {
+    const values = { ...(S.streak.killerStreaks || {}) };
+    const records = { ...(S.streak.killerRecords || {}) };
+    const next = Math.max(0, Math.floor(Number(values[target.killerImage]) || 0)) + 1;
+    values[target.killerImage] = next;
+    if (next > Math.max(0, Math.floor(Number(records[target.killerImage]) || 0))) records[target.killerImage] = next;
+    S.streak.killerStreaks = values;
+    S.streak.killerRecords = records;
+  } else {
+    S.streak.value = Math.max(0, Math.floor(Number(S.streak.value) || 0)) + 1;
+    S.streak.recordValue = Math.max(S.streak.recordValue || 0, S.streak.value);
+  }
+  syncCurrentStreakBucket();
+  // Keep pulsePending true: the +1 is still fading out and controls remain locked.
+  saveState();
+}
+
 function beginStreakPlusPulse() {
   if (S.streak.pulsePending) return false;
   const target = { mode: S.streak.mode === 'survivor' ? 'survivor' : 'killer', killerImage: String(S.streak.killerImage || '') };
@@ -236,24 +259,12 @@ function beginStreakPlusPulse() {
   S.streak.pulseDelta = 1;
   S.streak.pulseStartedAt = Date.now();
   pushState();
+  clearTimeout(streakIncrementCommitTimer);
   clearTimeout(streakIncrementTimer);
+  // The real number changes as the +1 starts its fade-out.
+  streakIncrementCommitTimer = setTimeout(() => commitStreakPlus(target), 1600);
+  // Keep the full 3 second input lock so the animation cannot be interrupted.
   streakIncrementTimer = setTimeout(() => {
-    if (target.mode === 'survivor') {
-      const next = Math.max(0, Math.floor(Number(S.streak.survivorValue) || 0)) + 1;
-      S.streak.survivorValue = next;
-      if (next > Math.max(0, Math.floor(Number(S.streak.survivorRecord) || 0))) S.streak.survivorRecord = next;
-    } else if (target.killerImage) {
-      const values = { ...(S.streak.killerStreaks || {}) };
-      const records = { ...(S.streak.killerRecords || {}) };
-      const next = Math.max(0, Math.floor(Number(values[target.killerImage]) || 0)) + 1;
-      values[target.killerImage] = next;
-      if (next > Math.max(0, Math.floor(Number(records[target.killerImage]) || 0))) records[target.killerImage] = next;
-      S.streak.killerStreaks = values;
-      S.streak.killerRecords = records;
-    } else {
-      S.streak.value = Math.max(0, Math.floor(Number(S.streak.value) || 0)) + 1;
-      S.streak.recordValue = Math.max(S.streak.recordValue || 0, S.streak.value);
-    }
     S.streak.pulsePending = false;
     S.streak.pulseDelta = 0;
     S.streak.pulseStartedAt = 0;
@@ -698,5 +709,5 @@ if (!gotSingleInstanceLock) {
     loadState(); startServer(); createAll(); if (S.streak.hotkey) hotkey(S.streak.hotkey); setTimeout(pushState, 300);
   });
 }
-app.on('before-quit', () => { quitting = true; clearTimeout(streakIncrementTimer); clearTimeout(directMoveSaveTimers.streak); clearTimeout(directMoveSaveTimers.match); globalShortcut.unregisterAll(); server?.close(); });
+app.on('before-quit', () => { quitting = true; clearTimeout(streakIncrementCommitTimer); clearTimeout(streakIncrementTimer); clearTimeout(directMoveSaveTimers.streak); clearTimeout(directMoveSaveTimers.match); globalShortcut.unregisterAll(); server?.close(); });
 app.on('window-all-closed', () => { if (quitting) app.quit(); });
