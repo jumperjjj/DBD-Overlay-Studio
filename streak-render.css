@@ -2,47 +2,74 @@
 *{box-sizing:border-box}
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent}
 .streak-widget{position:relative;width:400px;height:230px;color:#f7f8fa;--accent:#f97316;--panel:rgba(13,17,24,.965);--panel-soft:rgba(30,36,45,.925);--border:rgba(255,255,255,.14);font-family:Bahnschrift,"Segoe UI",Arial,sans-serif;font-variant-numeric:tabular-nums;user-select:none}
-.streak-card{position:absolute;left:6px;top:20px;width:388px;height:188px;border:1px solid var(--border);border-radius:14px;background:linear-gradient(116deg,var(--panel),var(--panel-soft));box-shadow:0 11px 28px rgba(0,0,0,.34),inset 0 1px rgba(255,255,255,.035);overflow:hidden;display:grid;grid-template-columns:150px minmax(0,1fr)}
-.streak-card:before{content:"";position:absolute;z-index:5;left:0;top:11px;bottom:11px;width:4px;border-radius:0 5px 5px 0;background:var(--accent);box-shadow:0 0 14px color-mix(in srgb,var(--accent) 58%,transparent)}
+.streak-widget.survivor-visual-off{width:266px}
+.streak-card{position:absolute;left:6px;top:20px;width:calc(100% - 12px);height:188px;border:1px solid var(--border);border-radius:14px;background:linear-gradient(116deg,var(--panel),var(--panel-soft));box-shadow:0 11px 28px rgba(0,0,0,.34),inset 0 1px rgba(255,255,255,.035);overflow:hidden;display:grid;grid-template-columns:156px minmax(0,1fr)}
+.streak-card:before{content:"";position:absolute;z-index:6;left:0;top:11px;bottom:11px;width:4px;border-radius:0 5px 5px 0;background:var(--accent);box-shadow:0 0 14px color-mix(in srgb,var(--accent) 58%,transparent);pointer-events:none}
 .visual-side{position:relative;min-width:0;overflow:hidden;background:radial-gradient(circle at 36% 58%,color-mix(in srgb,var(--accent) 16%,transparent),transparent 57%),linear-gradient(145deg,color-mix(in srgb,var(--accent) 9%,transparent),transparent 64%)}
 .visual-side:after{content:"";position:absolute;z-index:1;right:0;top:0;bottom:0;width:1px;background:linear-gradient(transparent,rgba(255,255,255,.12),transparent)}
-.visual-frame{position:absolute;inset:11px 10px;border:1px solid transparent;border-radius:11px;pointer-events:none;z-index:3}
-.killer-img,.survivor-img{position:absolute;z-index:2;left:50%;top:50%;width:164px;height:182px;object-fit:contain;object-position:center center;transform:translate(-50%,-50%);filter:drop-shadow(0 8px 8px rgba(0,0,0,.65))}
-.survivor-img{width:148px;height:176px}
-.visual-empty{position:absolute;z-index:2;inset:13px 11px;align-items:center;justify-content:center;border:1px solid color-mix(in srgb,var(--accent) 58%,#ffffff22);border-radius:11px;background:linear-gradient(145deg,color-mix(in srgb,var(--accent) 10%,transparent),rgba(255,255,255,.015));color:#eef1f5;font-size:12px;font-weight:900;letter-spacing:1.7px;text-transform:uppercase;text-shadow:0 2px 5px #000}
-.streak-main{position:relative;min-width:0;padding:16px 18px 13px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.visual-frame{position:absolute;inset:10px 9px;border:1px solid transparent;border-radius:11px;pointer-events:none;z-index:3}
+.killer-img,.survivor-img{position:absolute;z-index:2;left:50%;top:50%;width:178px;height:194px;object-fit:contain;object-position:center center;transform:translate(-50%,-50%);filter:drop-shadow(0 8px 8px rgba(0,0,0,.68))}
+.survivor-img{width:164px;height:184px}
+.visual-empty{position:absolute;z-index:2;inset:13px 11px;align-items:center;justify-content:center;border:1px solid color-mix(in srgb,var(--accent) 58%,#ffffff22);border-radius:11px;background:linear-gradient(145deg,color-mix(in srgb,var(--accent) 10%,transparent),rgba(255,255,255,.015));color:#eef1f5;font-size:11px;font-weight:900;letter-spacing:1.7px;text-transform:uppercase;text-shadow:0 2px 5px #000}
+.streak-main{position:relative;min-width:0;padding:14px 16px 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
 .custom-line{width:100%;min-height:14px;margin-bottom:4px;color:#b6bec9;font-size:9px;font-weight:800;letter-spacing:1.55px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;filter:var(--text-filter,none)}
 .custom-line.empty{visibility:hidden}
-.entity-name{width:100%;margin-bottom:5px;color:#fff;font-size:18px;font-weight:900;line-height:1.05;letter-spacing:1.25px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:var(--white-glow);filter:var(--text-filter,none)}
+.entity-name{width:100%;margin-bottom:5px;color:#fff;font-size:18px;font-weight:900;line-height:1.05;letter-spacing:1.15px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:var(--white-glow);filter:var(--text-filter,none)}
+.mode-survivor .entity-name{font-size:19px;letter-spacing:2px}
 .streak-value{color:var(--accent);font-size:64px;font-weight:900;line-height:.90;letter-spacing:-1.5px;text-shadow:0 0 10px color-mix(in srgb,var(--accent) 58%,transparent),0 3px 8px rgba(0,0,0,.78);filter:var(--text-filter,none)}
 .record-chip{margin-top:10px;min-width:122px;min-height:27px;padding:4px 12px 3px;border:1px solid color-mix(in srgb,var(--accent) 58%,#ffffff18);border-radius:8px;background:rgba(0,0,0,.23);display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:inset 0 1px rgba(255,255,255,.035);filter:var(--text-filter,none)}
 .record-chip span{font-size:9px;font-weight:850;letter-spacing:1.45px;color:#a5adba}.record-chip b{font-size:15px;line-height:1;color:#fff;font-weight:900}
-.mode-survivor.survivor-visual-off .streak-card{grid-template-columns:1fr}.mode-survivor.survivor-visual-off .visual-side{display:none}.mode-survivor.survivor-visual-off .streak-main{padding-left:42px;padding-right:42px}.mode-survivor.survivor-visual-off .entity-name{font-size:20px}
+.mode-survivor.survivor-visual-off .streak-card{grid-template-columns:1fr}
+.mode-survivor.survivor-visual-off .visual-side{display:none}
+.mode-survivor.survivor-visual-off .streak-main{padding-left:25px;padding-right:25px}
+.mode-survivor.survivor-visual-off .entity-name{font-size:20px}
 
-/* Style 1 — glass rounded, closest to the first concept */
-.style-1 .streak-card{border-radius:14px;background:linear-gradient(112deg,color-mix(in srgb,var(--accent) 4%,var(--panel)),var(--panel-soft) 59%,var(--panel));}
+/* Style 1 — rounded glass, faithful to the first approved concept. */
+.style-1 .streak-card{border-radius:14px;background:linear-gradient(112deg,color-mix(in srgb,var(--accent) 4%,var(--panel)),var(--panel-soft) 59%,var(--panel))}
 .style-1 .visual-side{background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 11%,transparent),transparent 72%)}
 .style-1 .visual-frame{border-color:transparent}
 
-/* Style 2 — angular split / esports */
-.style-2 .streak-card{border-radius:11px;clip-path:polygon(0 0,89% 0,100% 15%,100% 100%,10% 100%,0 86%);background:linear-gradient(120deg,color-mix(in srgb,var(--accent) 8%,var(--panel)),var(--panel) 47%,var(--panel-soft));}
+/* Style 2 — angular split / esports. */
+.style-2 .streak-card{border-radius:11px;clip-path:polygon(0 0,89% 0,100% 15%,100% 100%,10% 100%,0 86%);background:linear-gradient(120deg,color-mix(in srgb,var(--accent) 8%,var(--panel)),var(--panel) 47%,var(--panel-soft))}
 .style-2 .visual-side{clip-path:polygon(0 0,84% 0,100% 100%,0 100%);background:linear-gradient(140deg,color-mix(in srgb,var(--accent) 17%,#150c08),transparent 72%)}
 .style-2 .visual-side:after{right:7px;transform:skewX(-14deg);background:color-mix(in srgb,var(--accent) 56%,transparent)}
 .style-2 .visual-frame{inset:9px 13px 9px 8px;border-color:color-mix(in srgb,var(--accent) 30%,transparent);border-radius:7px;clip-path:polygon(0 0,84% 0,100% 100%,0 100%)}
 .style-2 .record-chip{border-radius:12px 5px 12px 5px}
+.style-2.mode-survivor.survivor-visual-off .streak-card{clip-path:polygon(0 0,91% 0,100% 16%,100% 100%,9% 100%,0 84%)}
 
-/* Style 3 — minimal floating panel */
-.style-3 .streak-card{top:25px;height:178px;border-color:rgba(255,255,255,.10);border-radius:16px;background:linear-gradient(90deg,var(--panel),color-mix(in srgb,var(--panel-soft) 88%,transparent));box-shadow:0 9px 23px rgba(0,0,0,.28)}
-.style-3 .streak-card:before{top:28px;bottom:28px;width:3px}
-.style-3 .visual-side{background:transparent}
+/* Style 3 — rebuilt: slim floating rail with an open portrait and accent underline. */
+.style-3 .streak-card{top:34px;height:158px;border:0;border-radius:12px;background:linear-gradient(90deg,color-mix(in srgb,var(--panel) 93%,transparent),color-mix(in srgb,var(--panel-soft) 86%,transparent));box-shadow:0 10px 25px rgba(0,0,0,.34),0 0 0 1px rgba(255,255,255,.055) inset;overflow:visible;grid-template-columns:142px minmax(0,1fr)}
+.style-3 .streak-card:before{left:18px;right:18px;top:auto;bottom:-1px;width:auto;height:2px;border-radius:4px;background:linear-gradient(90deg,transparent,var(--accent) 18%,var(--accent) 82%,transparent);box-shadow:0 0 10px color-mix(in srgb,var(--accent) 40%,transparent)}
+.style-3 .visual-side{overflow:visible;background:transparent}
+.style-3 .visual-side:after{display:none}
 .style-3 .visual-frame{display:none}
-.style-3 .killer-img,.style-3 .survivor-img{height:172px}
-.style-3 .custom-line{font-size:8.5px}.style-3 .entity-name{font-size:17px}.style-3 .streak-value{font-size:61px}.style-3 .record-chip{margin-top:8px;min-height:24px;background:rgba(0,0,0,.14)}
+.style-3 .killer-img{width:166px;height:181px;top:48%;filter:drop-shadow(0 9px 7px rgba(0,0,0,.72))}
+.style-3 .survivor-img{width:154px;height:171px;top:49%}
+.style-3 .visual-empty{inset:18px 10px;border-style:dashed;background:rgba(255,255,255,.015)}
+.style-3 .streak-main{padding:10px 14px 9px;justify-content:center}
+.style-3 .custom-line{font-size:8px;margin-bottom:2px;letter-spacing:1.7px}
+.style-3 .entity-name{font-size:16px;margin-bottom:4px}
+.style-3 .streak-value{font-size:57px;line-height:.86}
+.style-3 .record-chip{margin-top:7px;min-width:112px;min-height:22px;padding:3px 10px;border:0;border-top:1px solid color-mix(in srgb,var(--accent) 72%,transparent);border-radius:0;background:transparent;box-shadow:none}
+.style-3 .record-chip span{font-size:8px}.style-3 .record-chip b{font-size:13px}
+.style-3.mode-survivor.survivor-visual-off .streak-card{top:39px;height:150px;border-radius:14px;background:linear-gradient(110deg,color-mix(in srgb,var(--panel) 96%,transparent),color-mix(in srgb,var(--panel-soft) 84%,transparent))}
+.style-3.mode-survivor.survivor-visual-off .streak-main{padding:13px 24px 10px}
+.style-3.mode-survivor.survivor-visual-off .streak-value{font-size:60px}
 
-/* Style 4 — premium layered frame */
-.style-4 .streak-card{border-color:color-mix(in srgb,var(--accent) 23%,rgba(255,255,255,.18));border-radius:15px;background:linear-gradient(120deg,color-mix(in srgb,var(--accent) 7%,var(--panel)),var(--panel) 52%,var(--panel-soft));box-shadow:0 12px 30px rgba(0,0,0,.38),0 0 0 1px rgba(255,255,255,.025) inset,0 0 18px color-mix(in srgb,var(--accent) 10%,transparent)}
-.style-4 .streak-card:after{content:"";position:absolute;z-index:4;inset:6px;border:1px solid rgba(255,255,255,.035);border-radius:10px;pointer-events:none}
-.style-4 .visual-frame{border-color:color-mix(in srgb,var(--accent) 62%,transparent);box-shadow:0 0 12px color-mix(in srgb,var(--accent) 12%,transparent) inset;background:linear-gradient(155deg,color-mix(in srgb,var(--accent) 8%,transparent),transparent 60%)}
-.style-4 .record-chip{border-color:color-mix(in srgb,var(--accent) 72%,transparent);box-shadow:0 0 10px color-mix(in srgb,var(--accent) 10%,transparent),inset 0 1px rgba(255,255,255,.04)}
+/* Style 4 — rebuilt: premium framed card with cut corners and layered inner frame. */
+.style-4 .streak-card{top:16px;height:196px;border:1px solid color-mix(in srgb,var(--accent) 34%,rgba(255,255,255,.20));border-radius:18px;clip-path:polygon(14px 0,calc(100% - 14px) 0,100% 14px,100% calc(100% - 14px),calc(100% - 14px) 100%,14px 100%,0 calc(100% - 14px),0 14px);background:linear-gradient(122deg,color-mix(in srgb,var(--accent) 9%,var(--panel)),var(--panel) 45%,color-mix(in srgb,var(--panel-soft) 95%,var(--accent) 5%));box-shadow:0 14px 32px rgba(0,0,0,.40),0 0 20px color-mix(in srgb,var(--accent) 10%,transparent);grid-template-columns:164px minmax(0,1fr)}
+.style-4 .streak-card:before{left:0;top:18px;bottom:18px;width:5px;border-radius:0 7px 7px 0;background:linear-gradient(var(--accent),color-mix(in srgb,var(--accent) 55%,#fff),var(--accent));box-shadow:0 0 15px color-mix(in srgb,var(--accent) 68%,transparent)}
+.style-4 .streak-card:after{content:"";position:absolute;z-index:5;inset:6px;border:1px solid rgba(255,255,255,.045);clip-path:polygon(10px 0,calc(100% - 10px) 0,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0 calc(100% - 10px),0 10px);pointer-events:none}
+.style-4 .visual-side{background:radial-gradient(circle at 46% 45%,color-mix(in srgb,var(--accent) 22%,transparent),transparent 56%),linear-gradient(145deg,color-mix(in srgb,var(--accent) 15%,#0b0d12),transparent 68%)}
+.style-4 .visual-frame{inset:8px;border-color:color-mix(in srgb,var(--accent) 68%,transparent);border-radius:12px;clip-path:polygon(9px 0,100% 0,100% calc(100% - 9px),calc(100% - 9px) 100%,0 100%,0 9px);box-shadow:0 0 14px color-mix(in srgb,var(--accent) 12%,transparent) inset}
+.style-4 .killer-img{width:186px;height:202px}
+.style-4 .survivor-img{width:170px;height:190px}
+.style-4 .streak-main:before,.style-4 .streak-main:after{content:"";position:absolute;left:22px;right:22px;height:1px;background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--accent) 48%,transparent),transparent);pointer-events:none}
+.style-4 .streak-main:before{top:13px}.style-4 .streak-main:after{bottom:13px}
+.style-4 .entity-name{font-size:19px}.style-4 .streak-value{font-size:66px}
+.style-4 .record-chip{border-color:color-mix(in srgb,var(--accent) 78%,transparent);border-radius:11px;box-shadow:0 0 11px color-mix(in srgb,var(--accent) 11%,transparent),inset 0 1px rgba(255,255,255,.045)}
+.style-4.mode-survivor.survivor-visual-off .streak-card{grid-template-columns:1fr}
+.style-4.mode-survivor.survivor-visual-off .streak-main{padding-left:27px;padding-right:27px}
+.style-4.mode-survivor.survivor-visual-off .streak-main:before,.style-4.mode-survivor.survivor-visual-off .streak-main:after{left:34px;right:34px}
 
 .zero-opacity .streak-card{background:transparent!important;border-color:transparent!important;box-shadow:none!important}.zero-opacity .visual-side{background:transparent!important}.zero-opacity .visual-frame{background:transparent!important;border-color:transparent!important;box-shadow:none!important}.zero-opacity .record-chip{background:transparent!important}

@@ -4,7 +4,8 @@ const path = require('path');
 const http = require('http');
 
 const PORT = 17384;
-const STREAK_BASE = { w: 400, h: 230 };
+const STREAK_BASE_VISUAL = { w: 400, h: 230 };
+const STREAK_BASE_COMPACT = { w: 266, h: 230 };
 const MATCH_BASE = { w: 640, h: 200 };
 const MATCH_VERTICAL_BASE = { w: 320, h: 360 };
 const KILLER_GUTTER = 120;
@@ -22,7 +23,7 @@ let resizeSession = null;
 const directMoveSaveTimers = { streak: null, match: null };
 
 const DEF = {
-  schema: 280,
+  schema: 281,
   language: 'pt',
   uiTheme: 'dark',
   uiSize: 'standard',
@@ -31,7 +32,7 @@ const DEF = {
     enabled: false, x: 40, y: 40, scale: 1,
     style: 0, title: 'WIN STREAK', value: 0,
     streakV3: 1, mode: 'killer', customText: '', killerImage: '', survivorImage: '', survivorVisual: false,
-    killerRecords: {}, survivorRecord: 0,
+    killerStreaks: {}, killerRecords: {}, survivorValue: 0, survivorRecord: 0,
     nameColor: '#ffffff', valueColor: '#d7b84a', accent: '#f97316', bg1: '#0d1118',
     opacity: 1, nameSize: 18, valueSize: 36, nameX: 0, valueX: 0,
     bold: true, shadow: true, glow: 8,
@@ -69,10 +70,12 @@ const clone = x => JSON.parse(JSON.stringify(x));
 
 function loadState() {
   S = clone(DEF);
+  let loadedSchema = 0;
   try {
     const saved = JSON.parse(fs.readFileSync(settingsFile(), 'utf8'));
     if (saved && typeof saved === 'object') {
       const savedSchema = Number(saved.schema) || 0;
+      loadedSchema = savedSchema;
       S.language = ['pt','en','es'].includes(saved.language) ? saved.language : 'pt';
       S.uiTheme = ['dark','light','midnight','violet'].includes(saved.uiTheme) ? saved.uiTheme : 'dark';
       S.uiSize = ['compact','standard','large'].includes(saved.uiSize) ? saved.uiSize : 'standard';
@@ -83,10 +86,17 @@ function loadState() {
         S.match.rows = DEF.match.rows.map((r, i) => ({ ...r, ...(saved.match.rows[i] || {}) }));
       }
       if (savedSchema < 272 && Number(S.streak.record2Y) === 0) S.streak.record2Y = 25;
-      S.schema = 280;
+      S.schema = 281;
     }
   } catch {}
   normalizeState();
+  // WinStreak V3.1: migrate the current streak from the old single value into the selected bucket once.
+  if (loadedSchema < 281) {
+    const legacyValue = Math.max(0, Math.floor(Number(S.streak.value) || 0));
+    if (S.streak.mode === 'survivor') S.streak.survivorValue = legacyValue;
+    else if (S.streak.killerImage) S.streak.killerStreaks = { ...(S.streak.killerStreaks || {}), [S.streak.killerImage]: legacyValue };
+  }
+  syncCurrentStreakBucket();
   localizeDefaultMatchText();
   // Beta 2.0.0: Timer is the default module; legacy overlays start hidden.
   S.streak.enabled = false;
@@ -114,7 +124,9 @@ function normalizeState() {
   S.streak.killerImage = String(S.streak.killerImage || '');
   S.streak.survivorImage = String(S.streak.survivorImage || '');
   S.streak.survivorVisual = !!S.streak.survivorVisual;
+  S.streak.killerStreaks = S.streak.killerStreaks && typeof S.streak.killerStreaks === 'object' && !Array.isArray(S.streak.killerStreaks) ? S.streak.killerStreaks : {};
   S.streak.killerRecords = S.streak.killerRecords && typeof S.streak.killerRecords === 'object' && !Array.isArray(S.streak.killerRecords) ? S.streak.killerRecords : {};
+  S.streak.survivorValue = Math.max(0, Math.floor(Number(S.streak.survivorValue) || 0));
   S.streak.survivorRecord = Math.max(0, Math.floor(Number(S.streak.survivorRecord) || 0));
   S.streak.opacity = clamp(Number(S.streak.opacity ?? 1), 0, 1);
   S.streak.glow = clampInt(S.streak.glow ?? 20, 0, 100);
@@ -150,6 +162,27 @@ function survivorFiles() {
   try { return fs.readdirSync(survivorDir()).filter(x => /\.(png|jpe?g|webp)$/i.test(x)).sort(); }
   catch { return []; }
 }
+function currentStreakValue() {
+  if (S.streak.mode === 'survivor') return Math.max(0, Math.floor(Number(S.streak.survivorValue) || 0));
+  const file = String(S.streak.killerImage || '');
+  const map = S.streak.killerStreaks && typeof S.streak.killerStreaks === 'object' ? S.streak.killerStreaks : {};
+  return file ? Math.max(0, Math.floor(Number(map[file]) || 0)) : 0;
+}
+function setCurrentStreakValue(value) {
+  const v = Math.max(0, Math.floor(Number(value) || 0));
+  if (S.streak.mode === 'survivor') {
+    S.streak.survivorValue = v;
+  } else {
+    const file = String(S.streak.killerImage || '');
+    if (file) {
+      const map = { ...(S.streak.killerStreaks || {}) };
+      map[file] = v;
+      S.streak.killerStreaks = map;
+    }
+  }
+  S.streak.value = v;
+  return v;
+}
 function currentStreakRecord() {
   if (S.streak.mode === 'survivor') return Math.max(0, Math.floor(Number(S.streak.survivorRecord) || 0));
   const file = String(S.streak.killerImage || '');
@@ -171,8 +204,13 @@ function setCurrentStreakRecord(value) {
   S.streak.recordValue = v;
   return v;
 }
+function syncCurrentStreakBucket() {
+  S.streak.value = currentStreakValue();
+  S.streak.recordValue = currentStreakRecord();
+}
 function updateRecordFromStreak() {
-  const value = Math.max(0, Math.floor(Number(S.streak.value) || 0));
+  const value = currentStreakValue();
+  S.streak.value = value;
   const record = currentStreakRecord();
   if (value > record) setCurrentStreakRecord(value);
   else S.streak.recordValue = record;
@@ -186,7 +224,10 @@ function matchTitleSpace() {
 }
 function isVerticalMatch() { return Number(S.match.style) >= 10; }
 function logicalBase(key) {
-  if (key === 'streak') return STREAK_BASE;
+  if (key === 'streak') {
+    const compact = S.streak.mode === 'survivor' && S.streak.survivorVisual !== true;
+    return compact ? STREAK_BASE_COMPACT : STREAK_BASE_VISUAL;
+  }
   const base = isVerticalMatch() ? MATCH_VERTICAL_BASE : MATCH_BASE;
   return { w: base.w + (S.match.killerImage ? KILLER_GUTTER : 0), h: base.h + matchTitleSpace() };
 }
@@ -229,6 +270,22 @@ function applyWindowGeometry(key, keepCenter = false) {
   try { w.webContents.setZoomFactor(S[key].scale); } catch {}
   S[key].x = b.x; S[key].y = b.y;
   syncGuide(key);
+}
+
+
+function applyStreakSideGrowth(oldBounds) {
+  const w = streakWin;
+  if (!w || w.isDestroyed()) return;
+  const size = windowSize('streak');
+  const old = oldBounds || w.getBounds();
+  // Survivor without image is the compact right-hand card. Enabling the image adds only the left visual section.
+  const x = Math.round(old.x + old.width - size.width);
+  const y = S.streak.y ?? old.y;
+  const b = clampToDisplay({ x, y, ...size });
+  w.setBounds(b);
+  try { w.webContents.setZoomFactor(S.streak.scale); } catch {}
+  S.streak.x = b.x; S.streak.y = b.y;
+  syncGuide('streak');
 }
 
 function applyMatchTopGrowth(oldBounds) {
@@ -393,7 +450,7 @@ function hotkey(k) {
     const now = Date.now();
     if (now - lastHotkey < 1000) return;
     lastHotkey = now;
-    S.streak.value = Math.max(0, Math.floor(Number(S.streak.value) || 0) + 1);
+    setCurrentStreakValue(currentStreakValue() + 1);
     updateRecordFromStreak();
     saveState();
   };
@@ -413,9 +470,11 @@ function hotkey(k) {
 function resetStreak() {
   const keep = {
     x: S.streak.x, y: S.streak.y, enabled: S.streak.enabled, hotkey: S.streak.hotkey,
-    killerRecords: { ...(S.streak.killerRecords || {}) }, survivorRecord: Math.max(0, Number(S.streak.survivorRecord) || 0)
+    killerStreaks: { ...(S.streak.killerStreaks || {}) }, killerRecords: { ...(S.streak.killerRecords || {}) },
+    survivorValue: Math.max(0, Number(S.streak.survivorValue) || 0), survivorRecord: Math.max(0, Number(S.streak.survivorRecord) || 0)
   };
-  S.streak = { ...clone(DEF.streak), ...keep, value: 0, recordValue: 0 };
+  S.streak = { ...clone(DEF.streak), ...keep };
+  syncCurrentStreakBucket();
   applyWindowGeometry('streak', false);
   saveState();
 }
@@ -481,14 +540,22 @@ ipcMain.handle('patch', (_, section, patch) => {
     if (Object.prototype.hasOwnProperty.call(patch, 'uiSize')) applyUIWindowSize();
   } else if (section === 'streak' || section === 'match') {
     const oldK = S.match.killerImage;
+    const oldStreakBounds = section === 'streak' && streakWin && !streakWin.isDestroyed() ? streakWin.getBounds() : null;
     const oldMatchBounds = section === 'match' && matchWin && !matchWin.isDestroyed() ? matchWin.getBounds() : null;
     S[section] = { ...S[section], ...patch };
     normalizeState();
     if (section === 'streak') {
-      if (Object.prototype.hasOwnProperty.call(patch, 'mode') || Object.prototype.hasOwnProperty.call(patch, 'killerImage')) {
-        S.streak.recordValue = currentStreakRecord();
+      const switchedBucket = Object.prototype.hasOwnProperty.call(patch, 'mode') || Object.prototype.hasOwnProperty.call(patch, 'killerImage');
+      if (switchedBucket) syncCurrentStreakBucket();
+      if (Object.prototype.hasOwnProperty.call(patch, 'value')) {
+        setCurrentStreakValue(patch.value);
+        updateRecordFromStreak();
       }
-      if (Object.prototype.hasOwnProperty.call(patch, 'value')) updateRecordFromStreak();
+      if (Object.prototype.hasOwnProperty.call(patch, 'recordValue') && !Object.prototype.hasOwnProperty.call(patch, 'killerRecords') && !Object.prototype.hasOwnProperty.call(patch, 'survivorRecord')) {
+        setCurrentStreakRecord(patch.recordValue);
+      }
+      const layoutChanged = Object.prototype.hasOwnProperty.call(patch, 'mode') || Object.prototype.hasOwnProperty.call(patch, 'survivorVisual');
+      if (layoutChanged) applyStreakSideGrowth(oldStreakBounds);
     }
     if (Object.prototype.hasOwnProperty.call(patch, 'scale')) applyWindowGeometry(section, false);
     if (section === 'match') {
@@ -506,7 +573,7 @@ ipcMain.handle('streak-value', (_, mode, n) => {
   let v = Math.max(0, Number(S.streak.value) || 0);
   if (mode === 'delta') v = Math.max(0, v + (Number(n) || 0));
   else v = Math.max(0, Number(n) || 0);
-  S.streak.value = Math.floor(v);
+  setCurrentStreakValue(Math.floor(v));
   updateRecordFromStreak();
   saveState(); return S;
 });
