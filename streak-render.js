@@ -84,12 +84,23 @@
     root.style.setProperty('--panel',`rgba(${r},${g},${b},${(.965*opacity).toFixed(3)})`);
     root.style.setProperty('--panel-soft',`rgba(${Math.min(255,r+17)},${Math.min(255,g+19)},${Math.min(255,b+24)},${(.925*opacity).toFixed(3)})`);
     root.style.setProperty('--border',`rgba(255,255,255,${(.14*opacity).toFixed(3)})`);
-    root.style.setProperty('--text-filter',shadowStrength<=0?'none':`drop-shadow(0 1px ${(0.7+2.0*shadowPower).toFixed(2)}px rgba(0,0,0,${Math.min(.82,0.22+0.46*shadowPower).toFixed(3)}))`);
-    root.style.setProperty('--white-glow',shadowStrength<=0?'none':`0 0 ${(1.8+4.4*shadowPower).toFixed(1)}px rgba(255,255,255,${Math.min(.36,0.10+0.20*shadowPower).toFixed(2)}),0 2px 5px rgba(0,0,0,.78)`);
-    // Main label gets only a restrained halo; the dark drop-shadow still protects readability at 0% panel opacity.
-    root.style.setProperty('--entity-glow',shadowStrength<=0?'none':`0 0 ${(2.0+4.8*shadowPower).toFixed(1)}px rgba(255,255,255,${Math.min(.34,0.10+0.19*shadowPower).toFixed(2)}),0 2px 6px rgba(0,0,0,.82)`);
-    // The shadow slider is text-only. Keep the overlay/card shadow fixed so borders and panels never change with this control.
-    root.style.setProperty('--card-shadow','rgba(0,0,0,.34)');
+    root.style.setProperty('--text-filter',shadowStrength<=0?'none':`drop-shadow(0 1px ${(0.55+1.55*shadowPower).toFixed(2)}px rgba(0,0,0,${Math.min(.66,0.16+0.30*shadowPower).toFixed(3)}))`);
+    root.style.setProperty('--white-glow',shadowStrength<=0?'none':`0 0 ${(1.3+3.2*shadowPower).toFixed(1)}px rgba(255,255,255,${Math.min(.28,0.06+0.15*shadowPower).toFixed(2)}),0 1px 3px rgba(0,0,0,.48)`);
+    // Main label keeps a mild readable glow only; avoid the heavy washed halo.
+    root.style.setProperty('--entity-glow',shadowStrength<=0?'none':`0 0 ${(1.4+3.4*shadowPower).toFixed(1)}px rgba(255,255,255,${Math.min(.22,0.05+0.12*shadowPower).toFixed(2)}),0 1px 4px rgba(0,0,0,.52)`);
+    // Numbers use a lighter gray/white halo instead of a harsh black shadow so they stay cleaner on bright backgrounds.
+    root.style.setProperty('--number-shadow',shadowStrength<=0
+      ? `0 0 1px rgba(255,255,255,.18)`
+      : `0 0 ${(2.0+4.2*shadowPower).toFixed(1)}px rgba(255,255,255,${Math.min(.52,0.16+0.24*shadowPower).toFixed(2)}),0 1px ${(1.4+1.8*shadowPower).toFixed(1)}px rgba(244,246,249,${Math.min(.46,0.14+0.18*shadowPower).toFixed(2)}),0 1px 3px rgba(0,0,0,${Math.min(.28,0.10+0.10*shadowPower).toFixed(2)})`);
+    // The +1 pulse gets its own smoother, cleaner highlight so every glyph is evenly shaded.
+    root.style.setProperty('--pulse-shadow',shadowStrength<=0
+      ? `0 0 1px rgba(255,255,255,.30)`
+      : `0 0 ${(3.0+4.6*shadowPower).toFixed(1)}px rgba(255,255,255,${Math.min(.70,0.22+0.30*shadowPower).toFixed(2)}),0 0 ${(7.0+8.0*shadowPower).toFixed(1)}px color-mix(in srgb,var(--accent) 48%, rgba(255,255,255,.55)),0 1px 3px rgba(0,0,0,${Math.min(.24,0.08+0.08*shadowPower).toFixed(2)})`);
+    // The upper helper line stays crisp via a subtle black outline instead of a large shadow.
+    root.style.setProperty('--top-stroke','0.65px rgba(0,0,0,.82)');
+    root.style.setProperty('--top-shadow','0 1px 1px rgba(255,255,255,.07)');
+    // Keep layout edges clean.
+    root.style.setProperty('--card-shadow','transparent');
 
     const killer=root.querySelector('.killer-img'),survivor=root.querySelector('.survivor-img'),empty=root.querySelector('.visual-empty');
     killer.style.display='none';survivor.style.display='none';empty.style.display='none';

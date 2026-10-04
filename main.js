@@ -26,13 +26,13 @@ let resizeSession = null;
 const directMoveSaveTimers = { streak: null, match: null };
 
 const DEF = {
-  schema: 283,
+  schema: 284,
   language: 'pt',
   uiTheme: 'dark',
   uiSize: 'standard',
   quickPalette: true,
   streak: {
-    enabled: false, x: 40, y: 40, scale: 0.8,
+    enabled: false, x: 40, y: 40, scale: 0.9,
     style: 0, title: 'WIN STREAK', value: 0,
     streakV3: 1, mode: 'killer', customText: '', killerTopText: '', survivorTopText: '', survivorStreakText: 'WIN STREAK', killerImage: '', survivorImage: '', survivorVisual: false,
     killerStreaks: {}, killerRecords: {}, survivorValue: 0, survivorRecord: 0,
@@ -89,7 +89,7 @@ function loadState() {
         S.match.rows = DEF.match.rows.map((r, i) => ({ ...r, ...(saved.match.rows[i] || {}) }));
       }
       if (savedSchema < 272 && Number(S.streak.record2Y) === 0) S.streak.record2Y = 25;
-      S.schema = 283;
+      S.schema = 284;
     }
   } catch {}
   normalizeState();

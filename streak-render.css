@@ -3,7 +3,7 @@
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent}
 .streak-widget{position:relative;width:428px;height:230px;color:#f7f8fa;--accent:#f97316;--panel:rgba(13,17,24,.965);--panel-soft:rgba(30,36,45,.925);--border:rgba(255,255,255,.14);--number-size:64px;font-family:Bahnschrift,"Segoe UI",Arial,sans-serif;font-variant-numeric:tabular-nums;user-select:none}
 .streak-widget.survivor-visual-off{width:266px}
-.streak-card{position:absolute;left:6px;top:20px;width:calc(100% - 12px);height:188px;border:1px solid var(--border);border-radius:14px;background:linear-gradient(116deg,var(--panel),var(--panel-soft));box-shadow:0 11px 28px var(--card-shadow,rgba(0,0,0,.34)),inset 0 1px rgba(255,255,255,.035);overflow:hidden;display:grid;grid-template-columns:156px minmax(0,1fr)}
+.streak-card{position:absolute;left:6px;top:20px;width:calc(100% - 12px);height:188px;border:1px solid var(--border);border-radius:14px;background:linear-gradient(116deg,var(--panel),var(--panel-soft));box-shadow:0 11px 28px var(--card-shadow,transparent),inset 0 1px rgba(255,255,255,.035);overflow:hidden;display:grid;grid-template-columns:156px minmax(0,1fr)}
 .streak-card:before{content:"";position:absolute;z-index:6;left:0;top:11px;bottom:11px;width:4px;border-radius:0 5px 5px 0;background:var(--accent);box-shadow:0 0 14px color-mix(in srgb,var(--accent) 58%,transparent);pointer-events:none}
 .visual-side{position:relative;min-width:0;overflow:hidden;background:radial-gradient(circle at 36% 58%,color-mix(in srgb,var(--accent) 16%,transparent),transparent 57%),linear-gradient(145deg,color-mix(in srgb,var(--accent) 9%,transparent),transparent 64%)}
 .visual-side:after{content:"";position:absolute;z-index:1;right:0;top:0;bottom:0;width:1px;background:linear-gradient(transparent,rgba(255,255,255,.12),transparent)}
@@ -12,7 +12,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent
 .survivor-img{width:164px;height:184px}
 .visual-empty{position:absolute;z-index:2;inset:13px 11px;align-items:center;justify-content:center;border:1px solid color-mix(in srgb,var(--accent) 58%,#ffffff22);border-radius:11px;background:linear-gradient(145deg,color-mix(in srgb,var(--accent) 10%,transparent),rgba(255,255,255,.015));color:#eef1f5;font-size:11px;font-weight:900;letter-spacing:1.7px;text-transform:uppercase;text-shadow:0 2px 5px #000}
 .streak-main{position:relative;min-width:0;padding:14px 16px 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
-.custom-line{width:100%;min-height:17px;margin-bottom:4px;color:#b6bec9;font-size:14px;font-weight:800;letter-spacing:1.55px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;filter:var(--text-filter,none)}
+.custom-line{width:100%;min-height:17px;margin-bottom:4px;color:#c8d0da;font-size:14px;font-weight:800;letter-spacing:1.55px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;filter:none;-webkit-text-stroke:var(--top-stroke,0.65px rgba(0,0,0,.82));paint-order:stroke fill;text-shadow:var(--top-shadow,0 1px 1px rgba(255,255,255,.07))}
 .custom-line.empty{visibility:hidden}
 .entity-name{width:100%;margin-bottom:5px;color:#fff;font-size:18px;font-weight:900;line-height:1.05;letter-spacing:1.15px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:var(--entity-glow,var(--white-glow));filter:var(--text-filter,none);text-overflow:clip}
 .mode-survivor .entity-name{font-size:24px;letter-spacing:1.55px}
@@ -21,8 +21,8 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent
 .style-3.mode-killer .entity-name{font-size:22px}
 .mode-killer .value-wrap{margin-top:6px}
 .value-wrap{position:relative;display:flex;align-items:center;justify-content:center;min-height:58px}
-.streak-value{position:relative;z-index:1;color:var(--accent);font-size:var(--number-size);font-weight:900;line-height:.90;letter-spacing:-1.5px;text-shadow:0 0 10px color-mix(in srgb,var(--accent) 58%,transparent),0 3px 8px rgba(0,0,0,.78);filter:var(--text-filter,none)}
-.streak-pulse{position:absolute;z-index:4;left:50%;top:50%;opacity:0;pointer-events:none;color:#fff;font-size:var(--number-size);font-weight:950;line-height:.90;letter-spacing:-1.5px;text-shadow:0 0 6px #fff,0 0 14px color-mix(in srgb,var(--accent) 78%,transparent),0 4px 9px rgba(0,0,0,.86);transform:translate3d(-50%,-50%,0) scale(.72);transform-origin:center center;will-change:transform,opacity;backface-visibility:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;contain:paint}
+.streak-value{position:relative;z-index:1;color:var(--accent);font-size:var(--number-size);font-weight:900;line-height:.90;letter-spacing:-1.5px;text-shadow:var(--number-shadow,0 0 8px rgba(255,255,255,.42),0 1px 2px rgba(240,242,245,.34),0 1px 3px rgba(0,0,0,.20));filter:none}
+.streak-pulse{position:absolute;z-index:4;left:50%;top:50%;opacity:0;pointer-events:none;color:#fff;font-size:var(--number-size);font-weight:950;line-height:.90;letter-spacing:-1.5px;text-shadow:var(--pulse-shadow,0 0 6px rgba(255,255,255,.72),0 0 14px color-mix(in srgb,var(--accent) 68%,transparent),0 1px 3px rgba(0,0,0,.22));transform:translate3d(-50%,-50%,0) scale(.72);transform-origin:center center;will-change:transform,opacity;backface-visibility:hidden;-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision;contain:paint}
 .streak-pulse.play{animation:streakPlusPulse 2.95s cubic-bezier(.22,.72,.22,1) both}
 .pulse-active .streak-value{animation:streakValueDuringPulse 2.95s linear both}
 /* A single continuous GPU transform avoids the stepped/low-FPS feel caused by scaling a tiny rasterized glyph. */
@@ -41,7 +41,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent
 .style-1 .visual-frame{border-color:transparent}
 
 /* Style 2 — angular split / esports. */
-.style-2 .streak-card{border-radius:11px;clip-path:polygon(0 0,89% 0,100% 15%,100% 100%,10% 100%,0 86%);background:linear-gradient(120deg,color-mix(in srgb,var(--accent) 8%,var(--panel)),var(--panel) 47%,var(--panel-soft))}
+.style-2 .streak-card{border-radius:11px;clip-path:polygon(0 0,89% 0,100% 15%,100% 100%,10% 100%,0 86%);background:linear-gradient(120deg,color-mix(in srgb,var(--accent) 8%,var(--panel)),var(--panel) 47%,var(--panel-soft));box-shadow:inset 0 1px rgba(255,255,255,.035)}
 .style-2 .visual-side{clip-path:polygon(0 0,84% 0,100% 100%,0 100%);background:linear-gradient(140deg,color-mix(in srgb,var(--accent) 17%,#150c08),transparent 72%)}
 .style-2 .visual-side:after{right:7px;transform:skewX(-14deg);background:color-mix(in srgb,var(--accent) 56%,transparent)}
 .style-2 .visual-frame{inset:9px 13px 9px 8px;border-color:color-mix(in srgb,var(--accent) 30%,transparent);border-radius:7px;clip-path:polygon(0 0,84% 0,100% 100%,0 100%)}
