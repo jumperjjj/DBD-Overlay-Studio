@@ -61,7 +61,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent
 .style-3 .custom-line{font-size:13px;margin-bottom:2px;letter-spacing:1.7px}
 .style-3 .entity-name{margin-bottom:4px}
 .style-3{--number-size:57px}.style-3 .value-wrap{min-height:50px}.style-3 .streak-value,.style-3 .streak-pulse{line-height:.86}
-.style-3 .record-chip{margin-top:7px;min-width:112px;min-height:22px;padding:3px 10px;border:0;border-top:1px solid color-mix(in srgb,var(--accent) 72%,transparent);border-radius:0;background:transparent;box-shadow:none}
+.style-3 .record-chip{margin-top:11px;min-width:112px;min-height:22px;padding:3px 10px;border:0;border-top:1px solid color-mix(in srgb,var(--accent) 72%,transparent);border-radius:0;background:transparent;box-shadow:none}
 .style-3 .record-chip span{font-size:10px}.style-3 .record-chip b{font-size:16px}
 .style-3.mode-survivor.survivor-visual-off .streak-card{top:39px;height:150px;border-radius:14px;background:linear-gradient(110deg,color-mix(in srgb,var(--panel) 96%,transparent),color-mix(in srgb,var(--panel-soft) 84%,transparent))}
 .style-3.mode-survivor.survivor-visual-off .streak-main{padding:13px 24px 10px}
