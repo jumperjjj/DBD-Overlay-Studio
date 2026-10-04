@@ -92,10 +92,10 @@
     root.style.setProperty('--number-shadow',shadowStrength<=0
       ? `0 0 1px rgba(255,255,255,.18)`
       : `0 0 ${(2.0+4.2*shadowPower).toFixed(1)}px rgba(255,255,255,${Math.min(.52,0.16+0.24*shadowPower).toFixed(2)}),0 1px ${(1.4+1.8*shadowPower).toFixed(1)}px rgba(244,246,249,${Math.min(.46,0.14+0.18*shadowPower).toFixed(2)}),0 1px 3px rgba(0,0,0,${Math.min(.28,0.10+0.10*shadowPower).toFixed(2)})`);
-    // The +1 pulse gets its own smoother, cleaner highlight so every glyph is evenly shaded.
-    root.style.setProperty('--pulse-shadow',shadowStrength<=0
-      ? `0 0 1px rgba(255,255,255,.30)`
-      : `0 0 ${(3.0+4.6*shadowPower).toFixed(1)}px rgba(255,255,255,${Math.min(.70,0.22+0.30*shadowPower).toFixed(2)}),0 0 ${(7.0+8.0*shadowPower).toFixed(1)}px color-mix(in srgb,var(--accent) 48%, rgba(255,255,255,.55)),0 1px 3px rgba(0,0,0,${Math.min(.24,0.08+0.08*shadowPower).toFixed(2)})`);
+    // +1 follows the actual glyph alpha instead of painting a rectangular-looking glow around its box.
+    root.style.setProperty('--pulse-filter',shadowStrength<=0
+      ? `drop-shadow(0 1px 1px rgba(0,0,0,.16))`
+      : `drop-shadow(0 1px 1px rgba(0,0,0,${Math.min(.24,0.12+0.08*shadowPower).toFixed(2)})) drop-shadow(0 0 ${(1.2+1.8*shadowPower).toFixed(1)}px rgba(255,255,255,${Math.min(.34,0.12+0.14*shadowPower).toFixed(2)})) drop-shadow(0 0 ${(2.4+2.6*shadowPower).toFixed(1)}px color-mix(in srgb,var(--accent) 28%,transparent))`);
     // The upper helper line stays crisp via a subtle black outline instead of a large shadow.
     root.style.setProperty('--top-stroke','0.65px rgba(0,0,0,.82)');
     root.style.setProperty('--top-shadow','0 1px 1px rgba(255,255,255,.07)');
