@@ -4,7 +4,7 @@ const path = require('path');
 const http = require('http');
 
 const PORT = 17384;
-const STREAK_BASE = { w: 350, h: 285 };
+const STREAK_BASE = { w: 400, h: 230 };
 const MATCH_BASE = { w: 640, h: 200 };
 const MATCH_VERTICAL_BASE = { w: 320, h: 360 };
 const KILLER_GUTTER = 120;
@@ -30,7 +30,9 @@ const DEF = {
   streak: {
     enabled: false, x: 40, y: 40, scale: 1,
     style: 0, title: 'WIN STREAK', value: 0,
-    nameColor: '#ffffff', valueColor: '#d7b84a', accent: '#d7b84a', bg1: '#15191f',
+    streakV3: 1, mode: 'killer', customText: '', killerImage: '', survivorImage: '', survivorVisual: false,
+    killerRecords: {}, survivorRecord: 0,
+    nameColor: '#ffffff', valueColor: '#d7b84a', accent: '#f97316', bg1: '#0d1118',
     opacity: 1, nameSize: 18, valueSize: 36, nameX: 0, valueX: 0,
     bold: true, shadow: true, glow: 8,
     fontName: 'Segoe UI', fontValue: 'Impact', hotkey: '',
@@ -62,6 +64,7 @@ const DEF = {
 let S;
 const settingsFile = () => path.join(app.getPath('userData'), 'settings-v270.json');
 const killerDir = () => path.join(__dirname, 'killers');
+const survivorDir = () => path.join(__dirname, 'Survivors');
 const clone = x => JSON.parse(JSON.stringify(x));
 
 function loadState() {
@@ -102,10 +105,21 @@ function normalizeState() {
   S.match.scale = clamp(Number(S.match.scale) || 1, SCALE_LIMITS.match.min, SCALE_LIMITS.match.max);
   S.match.killerBg = /^#/.test(S.match.killerBg||'') ? S.match.killerBg : '#0b0e14';
   S.match.rows = (S.match.rows||[]).map((r,i)=>({ ...DEF.match.rows[i], ...r, textColor: /^#/.test(r?.textColor||'') ? r.textColor : '#ffffff' }));
-  S.streak.value = Math.max(0, Number(S.streak.value) || 0);
-  S.streak.recordValue = Math.max(0, Number(S.streak.recordValue) || 0);
-  S.streak.record2Value = Math.max(0, Number(S.streak.record2Value) || 0);
-  S.streak.style = clampInt(S.streak.style, 0, 13);
+  S.streak.value = Math.max(0, Math.floor(Number(S.streak.value) || 0));
+  S.streak.recordValue = Math.max(0, Math.floor(Number(S.streak.recordValue) || 0));
+  S.streak.record2Value = Math.max(0, Math.floor(Number(S.streak.record2Value) || 0));
+  S.streak.style = clampInt(S.streak.style, 0, 3);
+  S.streak.mode = S.streak.mode === 'survivor' ? 'survivor' : 'killer';
+  S.streak.customText = String(S.streak.customText || '').slice(0, 32);
+  S.streak.killerImage = String(S.streak.killerImage || '');
+  S.streak.survivorImage = String(S.streak.survivorImage || '');
+  S.streak.survivorVisual = !!S.streak.survivorVisual;
+  S.streak.killerRecords = S.streak.killerRecords && typeof S.streak.killerRecords === 'object' && !Array.isArray(S.streak.killerRecords) ? S.streak.killerRecords : {};
+  S.streak.survivorRecord = Math.max(0, Math.floor(Number(S.streak.survivorRecord) || 0));
+  S.streak.opacity = clamp(Number(S.streak.opacity ?? 1), 0, 1);
+  S.streak.glow = clampInt(S.streak.glow ?? 20, 0, 100);
+  S.streak.accent = /^#[0-9a-f]{6}$/i.test(String(S.streak.accent || '')) ? S.streak.accent : '#f97316';
+  S.streak.bg1 = /^#[0-9a-f]{6}$/i.test(String(S.streak.bg1 || '')) ? S.streak.bg1 : '#0d1118';
   S.match.style = clampInt(S.match.style, 0, 15);
   if (S.match.style === 12) S.match.style = 14;
   if (!['dark','light','midnight','violet'].includes(S.uiTheme)) S.uiTheme = 'dark';
@@ -131,6 +145,37 @@ function pushState() {
 function killerFiles() {
   try { return fs.readdirSync(killerDir()).filter(x => /\.(png|jpe?g|webp)$/i.test(x)).sort(); }
   catch { return []; }
+}
+function survivorFiles() {
+  try { return fs.readdirSync(survivorDir()).filter(x => /\.(png|jpe?g|webp)$/i.test(x)).sort(); }
+  catch { return []; }
+}
+function currentStreakRecord() {
+  if (S.streak.mode === 'survivor') return Math.max(0, Math.floor(Number(S.streak.survivorRecord) || 0));
+  const file = String(S.streak.killerImage || '');
+  const map = S.streak.killerRecords && typeof S.streak.killerRecords === 'object' ? S.streak.killerRecords : {};
+  return file ? Math.max(0, Math.floor(Number(map[file]) || 0)) : 0;
+}
+function setCurrentStreakRecord(value) {
+  const v = Math.max(0, Math.floor(Number(value) || 0));
+  if (S.streak.mode === 'survivor') {
+    S.streak.survivorRecord = v;
+  } else {
+    const file = String(S.streak.killerImage || '');
+    if (file) {
+      const map = { ...(S.streak.killerRecords || {}) };
+      map[file] = v;
+      S.streak.killerRecords = map;
+    }
+  }
+  S.streak.recordValue = v;
+  return v;
+}
+function updateRecordFromStreak() {
+  const value = Math.max(0, Math.floor(Number(S.streak.value) || 0));
+  const record = currentStreakRecord();
+  if (value > record) setCurrentStreakRecord(value);
+  else S.streak.recordValue = record;
 }
 
 function matchTitleSpace() {
@@ -348,7 +393,8 @@ function hotkey(k) {
     const now = Date.now();
     if (now - lastHotkey < 1000) return;
     lastHotkey = now;
-    S.streak.value = Math.max(0, (Number(S.streak.value) || 0) + 1);
+    S.streak.value = Math.max(0, Math.floor(Number(S.streak.value) || 0) + 1);
+    updateRecordFromStreak();
     saveState();
   };
   if (next) {
@@ -365,8 +411,11 @@ function hotkey(k) {
 }
 
 function resetStreak() {
-  const keep = { x: S.streak.x, y: S.streak.y, enabled: S.streak.enabled, hotkey: S.streak.hotkey };
-  S.streak = { ...clone(DEF.streak), ...keep, value: 0 };
+  const keep = {
+    x: S.streak.x, y: S.streak.y, enabled: S.streak.enabled, hotkey: S.streak.hotkey,
+    killerRecords: { ...(S.streak.killerRecords || {}) }, survivorRecord: Math.max(0, Number(S.streak.survivorRecord) || 0)
+  };
+  S.streak = { ...clone(DEF.streak), ...keep, value: 0, recordValue: 0 };
   applyWindowGeometry('streak', false);
   saveState();
 }
@@ -392,6 +441,24 @@ function startServer() {
         return fs.createReadStream(file).pipe(res);
       } catch { res.writeHead(400); return res.end(); }
     }
+    if (req.url.startsWith('/survivor?')) {
+      try {
+        const u = new URL(req.url, 'http://127.0.0.1');
+        const name = path.basename(u.searchParams.get('name') || '');
+        const file = path.join(survivorDir(), name);
+        if (!name || !fs.existsSync(file)) { res.writeHead(404); return res.end(); }
+        const ext = path.extname(name).toLowerCase();
+        const type = ext === '.png' ? 'image/png' : ext === '.webp' ? 'image/webp' : 'image/jpeg';
+        res.writeHead(200, { 'Content-Type': type, 'Cache-Control': 'no-store' });
+        return fs.createReadStream(file).pipe(res);
+      } catch { res.writeHead(400); return res.end(); }
+    }
+    if (req.url === '/streak-render.css' || req.url === '/streak-render.js') {
+      const file = path.join(__dirname, req.url.slice(1));
+      const type = req.url.endsWith('.css') ? 'text/css; charset=utf-8' : 'application/javascript; charset=utf-8';
+      res.writeHead(200, { 'Content-Type': type, 'Cache-Control': 'no-store' });
+      return res.end(fs.readFileSync(file));
+    }
     if (req.url.startsWith('/state')) {
       res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'Access-Control-Allow-Origin': '*' });
       return res.end(JSON.stringify(S));
@@ -405,7 +472,7 @@ function startServer() {
   }).listen(PORT, '127.0.0.1');
 }
 
-ipcMain.handle('get', () => ({ state: S, url: `http://127.0.0.1:${PORT}/overlay`, killers: killerFiles() }));
+ipcMain.handle('get', () => ({ state: S, url: `http://127.0.0.1:${PORT}/overlay`, killers: killerFiles(), survivors: survivorFiles() }));
 ipcMain.handle('patch', (_, section, patch) => {
   if (section === 'root') {
     S = { ...S, ...patch };
@@ -417,6 +484,12 @@ ipcMain.handle('patch', (_, section, patch) => {
     const oldMatchBounds = section === 'match' && matchWin && !matchWin.isDestroyed() ? matchWin.getBounds() : null;
     S[section] = { ...S[section], ...patch };
     normalizeState();
+    if (section === 'streak') {
+      if (Object.prototype.hasOwnProperty.call(patch, 'mode') || Object.prototype.hasOwnProperty.call(patch, 'killerImage')) {
+        S.streak.recordValue = currentStreakRecord();
+      }
+      if (Object.prototype.hasOwnProperty.call(patch, 'value')) updateRecordFromStreak();
+    }
     if (Object.prototype.hasOwnProperty.call(patch, 'scale')) applyWindowGeometry(section, false);
     if (section === 'match') {
       const killerChanged = Object.prototype.hasOwnProperty.call(patch, 'killerImage') && !!oldK !== !!S.match.killerImage;
@@ -433,7 +506,9 @@ ipcMain.handle('streak-value', (_, mode, n) => {
   let v = Math.max(0, Number(S.streak.value) || 0);
   if (mode === 'delta') v = Math.max(0, v + (Number(n) || 0));
   else v = Math.max(0, Number(n) || 0);
-  S.streak.value = v; saveState(); return S;
+  S.streak.value = Math.floor(v);
+  updateRecordFromStreak();
+  saveState(); return S;
 });
 ipcMain.handle('hotkey', (_, k) => hotkey(k));
 ipcMain.handle('edit', (_, v) => { setEdit(v); return S; });

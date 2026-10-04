@@ -33,6 +33,7 @@
       "timer-render.js",
       "timer-render.css",
       "killers/**/*",
+      "Survivors/**/*",
       "assets/**/*",
       "streak-ui-v2.js",
       "streak-render.js",
