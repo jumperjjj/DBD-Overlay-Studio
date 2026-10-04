@@ -49,6 +49,20 @@
         </div>
       </div>`;
   }
+  function fitKillerName(el){
+    if(!el)return;
+    el.style.removeProperty('font-size');
+    el.style.removeProperty('letter-spacing');
+    // Start at the style's intended size, then only shrink when a long Killer name truly needs it.
+    let size=parseFloat(getComputedStyle(el).fontSize)||24;
+    let spacing=parseFloat(getComputedStyle(el).letterSpacing);if(!Number.isFinite(spacing))spacing=0;
+    const min=15.5;
+    while(el.scrollWidth>el.clientWidth+1&&size>min){
+      size=Math.max(min,size-.5);
+      el.style.fontSize=size+'px';
+      if(size<20)el.style.letterSpacing=Math.max(.25,spacing-(20-size)*.08)+'px';
+    }
+  }
   function apply(root,state){
     const s=state?.streak||state||{};if(!root||!s)return;ensure(root);
     const accent=/^#[0-9a-f]{6}$/i.test(String(s.accent||''))?s.accent:'#f97316';
@@ -67,6 +81,8 @@
     root.style.setProperty('--border',`rgba(255,255,255,${(.14*opacity).toFixed(3)})`);
     root.style.setProperty('--text-filter',shadowStrength<=0?'none':`drop-shadow(0 1px ${(0.6+2.2*shadowPower).toFixed(2)}px rgba(0,0,0,${Math.min(.88,0.20+0.48*shadowPower).toFixed(3)}))`);
     root.style.setProperty('--white-glow',shadowStrength<=0?'none':`0 0 ${(2+6*shadowPower).toFixed(1)}px rgba(255,255,255,${Math.min(.46,0.12+0.25*shadowPower).toFixed(2)}),0 2px 5px rgba(0,0,0,.78)`);
+    // Slightly stronger glow only for the Killer name / Survivor streak name. Top text and record keep the existing glow.
+    root.style.setProperty('--entity-glow',shadowStrength<=0?'none':`0 0 ${(3+7.2*shadowPower).toFixed(1)}px rgba(255,255,255,${Math.min(.56,0.16+0.29*shadowPower).toFixed(2)}),0 2px 6px rgba(0,0,0,.80)`);
     // The shadow slider is text-only. Keep the overlay/card shadow fixed so borders and panels never change with this control.
     root.style.setProperty('--card-shadow','rgba(0,0,0,.34)');
 
@@ -80,7 +96,7 @@
       else {survivor.removeAttribute('src');empty.innerHTML='<span>SURVIVOR</span>';empty.style.display='flex'}
     }
 
-    const custom=String(s.customText||'').trim(),customEl=root.querySelector('.custom-line');
+    const custom=String(mode==='survivor'?(s.survivorTopText??s.customText??''):(s.killerTopText??s.customText??'')).trim(),customEl=root.querySelector('.custom-line');
     customEl.textContent=custom;customEl.classList.toggle('empty',!custom);
     // Survivor images are purely visual. The selected Survivor name never replaces the editable streak label.
     const entity=root.querySelector('.entity-name');
@@ -88,6 +104,7 @@
     entity.textContent=entityText;
     entity.classList.toggle('long-name',mode==='killer'&&entityText.length>=15);
     entity.classList.toggle('very-long-name',mode==='killer'&&entityText.length>=18);
+    if(mode==='killer')fitKillerName(entity);else{entity.style.removeProperty('font-size');entity.style.removeProperty('letter-spacing')}
     root.querySelector('.streak-value').textContent=String(Math.max(0,Math.floor(Number(s.value)||0)));
     root.querySelector('.record-chip b').textContent=String(Math.max(0,Math.floor(Number(s.recordValue)||0)));
     const pulse=root.querySelector('.streak-pulse');

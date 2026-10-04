@@ -4,7 +4,7 @@ const path = require('path');
 const http = require('http');
 
 const PORT = 17384;
-const STREAK_BASE_VISUAL = { w: 400, h: 230 };
+const STREAK_BASE_VISUAL = { w: 428, h: 230 };
 const STREAK_BASE_COMPACT = { w: 266, h: 230 };
 const MATCH_BASE = { w: 640, h: 200 };
 const MATCH_VERTICAL_BASE = { w: 320, h: 360 };
@@ -26,7 +26,7 @@ let resizeSession = null;
 const directMoveSaveTimers = { streak: null, match: null };
 
 const DEF = {
-  schema: 282,
+  schema: 283,
   language: 'pt',
   uiTheme: 'dark',
   uiSize: 'standard',
@@ -34,7 +34,7 @@ const DEF = {
   streak: {
     enabled: false, x: 40, y: 40, scale: 0.8,
     style: 0, title: 'WIN STREAK', value: 0,
-    streakV3: 1, mode: 'killer', customText: '', survivorStreakText: 'WIN STREAK', killerImage: '', survivorImage: '', survivorVisual: false,
+    streakV3: 1, mode: 'killer', customText: '', killerTopText: '', survivorTopText: '', survivorStreakText: 'WIN STREAK', killerImage: '', survivorImage: '', survivorVisual: false,
     killerStreaks: {}, killerRecords: {}, survivorValue: 0, survivorRecord: 0,
     nameColor: '#ffffff', valueColor: '#d7b84a', accent: '#f97316', bg1: '#0d1118',
     opacity: 1, nameSize: 18, valueSize: 36, nameX: 0, valueX: 0,
@@ -89,7 +89,7 @@ function loadState() {
         S.match.rows = DEF.match.rows.map((r, i) => ({ ...r, ...(saved.match.rows[i] || {}) }));
       }
       if (savedSchema < 272 && Number(S.streak.record2Y) === 0) S.streak.record2Y = 25;
-      S.schema = 282;
+      S.schema = 283;
     }
   } catch {}
   normalizeState();
@@ -98,6 +98,12 @@ function loadState() {
     const legacyValue = Math.max(0, Math.floor(Number(S.streak.value) || 0));
     if (S.streak.mode === 'survivor') S.streak.survivorValue = legacyValue;
     else if (S.streak.killerImage) S.streak.killerStreaks = { ...(S.streak.killerStreaks || {}), [S.streak.killerImage]: legacyValue };
+  }
+  // V3.7: top text is independent for Killer and Survivor. Preserve the previous shared text on upgrade.
+  if (loadedSchema < 283) {
+    const legacyTop = String(S.streak.customText || '').slice(0, 32);
+    if (!String(S.streak.killerTopText || '').trim()) S.streak.killerTopText = legacyTop;
+    if (!String(S.streak.survivorTopText || '').trim()) S.streak.survivorTopText = legacyTop;
   }
   syncCurrentStreakBucket();
   localizeDefaultMatchText();
@@ -123,7 +129,9 @@ function normalizeState() {
   S.streak.record2Value = Math.max(0, Math.floor(Number(S.streak.record2Value) || 0));
   S.streak.style = clampInt(S.streak.style, 0, 3);
   S.streak.mode = S.streak.mode === 'survivor' ? 'survivor' : 'killer';
-  S.streak.customText = String(S.streak.customText || '').slice(0, 32);
+  S.streak.customText = String(S.streak.customText || '').slice(0, 32); // legacy shared field kept for compatibility
+  S.streak.killerTopText = String(S.streak.killerTopText ?? S.streak.customText ?? '').slice(0, 32);
+  S.streak.survivorTopText = String(S.streak.survivorTopText ?? S.streak.customText ?? '').slice(0, 32);
   S.streak.survivorStreakText = String(S.streak.survivorStreakText || 'WIN STREAK').slice(0, 24);
   S.streak.killerImage = String(S.streak.killerImage || '');
   S.streak.survivorImage = String(S.streak.survivorImage || '');
