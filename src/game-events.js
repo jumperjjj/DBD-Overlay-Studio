@@ -1,0 +1,31 @@
+const RARITIES=['Raro','Épico','Lendário','Mítico'];
+const DEFAULT_DRAFT={name:'Maré de sorte',durationMinutes:60,goldEnabled:true,goldBonus:25,rareEnabled:false,rareBonus:50,rarities:['Raro','Épico','Lendário','Mítico'],frenzyEnabled:false,cooldownReduction:50,curseEnabled:false,curseBonus:50,announce:true,startMessage:'🎣 {evento} começou! {efeitos} Duração: {duracao}.',endMessage:'🎣 {evento} terminou. O lago voltou ao normal.'};
+function validateDraft(body){
+ const data={...DEFAULT_DRAFT,...body};data.name=String(data.name).trim();
+ if(!data.name||data.name.length>80)throw new Error('Informe um nome de até 80 caracteres.');
+ for(const [key,min,max] of [['durationMinutes',1,1440],['goldBonus',0,1000],['rareBonus',0,1000],['cooldownReduction',0,100],['curseBonus',0,1000]]){data[key]=Number(data[key]);if(!Number.isFinite(data[key])||data[key]<min||data[key]>max)throw new Error('Valor inválido: '+key);}
+ for(const key of ['goldEnabled','rareEnabled','frenzyEnabled','curseEnabled','announce'])if(typeof data[key]!=='boolean')throw new Error('Opção inválida: '+key);
+ if(!Array.isArray(data.rarities)||data.rarities.some(r=>!RARITIES.includes(r)))throw new Error('Selecione raridades válidas.');data.rarities=[...new Set(data.rarities)];
+ if(data.rareEnabled&&!data.rarities.length)throw new Error('Escolha pelo menos uma raridade para o bônus.');
+ if(!(data.goldEnabled&&data.goldBonus>0||data.rareEnabled&&data.rareBonus>0||data.frenzyEnabled&&data.cooldownReduction>0||data.curseEnabled&&data.curseBonus>0))throw new Error('Ative pelo menos um efeito com valor maior que zero.');
+ for(const key of ['startMessage','endMessage']){data[key]=String(data[key]).trim();if(!data[key]||data[key].length>500)throw new Error('Use mensagens de 1 a 500 caracteres.');}
+ return data;
+}
+function effects(event){return [event.goldEnabled&&event.goldBonus>0?`ouro +${event.goldBonus}%`:null,event.rareEnabled&&event.rareBonus>0?`chances de ${event.rarities.join(', ')} +${event.rareBonus}%`:null,event.frenzyEnabled&&event.cooldownReduction>0?`espera −${event.cooldownReduction}%`:null,event.curseEnabled?`chances de amaldiçoados +${event.curseBonus}%`:null].filter(Boolean).join(' · ');}
+function eventMessage(event,end=false){return (end?event.endMessage:event.startMessage).replace(/\{(evento|efeitos|duracao)\}/g,(_match,key)=>({evento:event.name,efeitos:effects(event),duracao:event.durationMinutes+' min'}[key])).slice(0,500);}
+class GameEvents {
+ constructor(db,broadcast=()=>{},announce=async()=>null){this.db=db;this.broadcast=broadcast;this.announce=announce;this.timers=new Map();for(const row of db.db.prepare("SELECT * FROM game_events WHERE status='active'").all())this.schedule(row);}
+ draft(channelId){try{return {...DEFAULT_DRAFT,...JSON.parse(this.db.getSetting('event_draft:'+channelId,'{}'))};}catch{return {...DEFAULT_DRAFT};}}
+ saveDraft(channelId,body){const data=validateDraft(body);this.db.setSetting('event_draft:'+channelId,JSON.stringify(data));return data;}
+ active(channelId,now=Date.now()){const row=this.db.db.prepare("SELECT * FROM game_events WHERE channel_id=? AND status='active' AND ends_at>? ORDER BY id DESC LIMIT 1").get(channelId,now);return row?{...JSON.parse(row.config),id:row.id,channelId,startedAt:row.started_at,endsAt:row.ends_at}:null;}
+ state(channelId){return {draft:this.draft(channelId),active:this.active(channelId),history:this.db.db.prepare('SELECT id,name,started_at,ends_at,status FROM game_events WHERE channel_id=? ORDER BY id DESC LIMIT 10').all(channelId)};}
+ async start(channelId,body){if(this.active(channelId))throw new Error('Encerre o evento atual antes de iniciar outro.');const data=this.saveDraft(channelId,body);const now=Date.now();const row=this.db.db.prepare("INSERT INTO game_events(channel_id,name,config,started_at,ends_at,status) VALUES(?,?,?,?,?,'active')").run(channelId,data.name,JSON.stringify(data),now,now+data.durationMinutes*60000);const id=Number(row.lastInsertRowid);const stored=this.db.db.prepare('SELECT * FROM game_events WHERE id=?').get(id);this.schedule(stored);const active=this.active(channelId);this.broadcast({type:'event:updated',channelId,active});const chatWarning=await this.send(active,false);return {ok:true,active,chatWarning};}
+ schedule(row){clearTimeout(this.timers.get(row.id));const timeout=setTimeout(()=>this.stop(row.channel_id,row.id,'expired').catch(error=>this.broadcast({type:'event:error',message:error.message})),Math.max(0,row.ends_at-Date.now()));timeout.unref?.();this.timers.set(row.id,timeout);}
+ async send(event,end){if(!event.announce)return null;try{return await this.announce(eventMessage(event,end));}catch(error){const warning='Evento aplicado, mas o bot não conseguiu enviar o aviso: '+error.message;this.broadcast({type:'event:error',message:warning});return warning;}}
+ async stop(channelId,id=null,status='stopped'){const row=this.db.db.prepare("SELECT * FROM game_events WHERE channel_id=? AND status='active' "+(id?'AND id=?':'')+' ORDER BY id DESC LIMIT 1').get(...(id?[channelId,id]:[channelId]));if(!row)return {ok:true,active:null};this.db.db.prepare("UPDATE game_events SET status=? WHERE id=? AND status='active'").run(status,row.id);clearTimeout(this.timers.get(row.id));this.timers.delete(row.id);const event={...JSON.parse(row.config),id:row.id};const active=this.active(channelId);this.broadcast({type:'event:updated',channelId,active});return {ok:true,active,chatWarning:await this.send(event,true)};}
+ cooldown(channelId,seconds){const event=this.active(channelId);return Number(seconds)*(event?.frenzyEnabled?1-event.cooldownReduction/100:1);}
+ items(channelId,items,event=this.active(channelId)){return event?items.map(item=>({...item,chance:Number(item.chance)*(event.rareEnabled&&event.rarities.includes(item.rarity)?1+event.rareBonus/100:1)*(event.curseEnabled&&item.rarity==='Amaldiçoado'?1+event.curseBonus/100:1)})):items;}
+ gold(channelId,amount,event=this.active(channelId)){return Math.round(Number(amount)*(amount>0&&event?.goldEnabled?1+event.goldBonus/100:1));}
+ close(){for(const timer of this.timers.values())clearTimeout(timer);this.timers.clear();}
+}
+module.exports={GameEvents,DEFAULT_DRAFT,RARITIES,validateDraft,effects,eventMessage};

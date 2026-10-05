@@ -1,0 +1,10 @@
+Fishing Chat Game 1.0.0
+
+Para GitHub e EXE, siga PASSO-A-PASSO-RELEASE-v1.0.0.txt.
+Para testar sem compilar, feche a versão anterior, extraia o ZIP completo
+e abra INICIAR.bat. Mantenha a janela do terminal aberta.
+
+Na PRIMEIRA abertura da 1.0.0, inclusive por INICIAR.bat, o aplicativo
+salva um backup e zera o progresso dos jogadores uma única vez, conforme
+solicitado. Catálogo, imagens e configurações são preservados.
+As próximas aberturas mantêm o progresso novo.

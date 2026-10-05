@@ -1,0 +1,23 @@
+const test=require('node:test');const assert=require('node:assert/strict');const fs=require('node:fs');const os=require('node:os');const path=require('node:path');const vm=require('node:vm');const {EventEmitter}=require('node:events');
+const {GameDatabase}=require('../src/database');const {listCommands,saveCommands,reply}=require('../src/chat-commands');const {LocalServer}=require('../src/local-server');const {FishingEngine}=require('../src/fishing-engine');
+function fixture(t){const dir=fs.mkdtempSync(path.join(os.tmpdir(),'fishing-chat-command-'));const db=new GameDatabase(dir);t.after(()=>{db.close();fs.rmSync(dir,{recursive:true,force:true});});return {db,dir};}
+const alice={id:'alice',login:'alice',displayName:'Alice'};
+test('chat queries give counts, no achievement names or overlays, and do not create players',t=>{
+ const {db}=fixture(t);assert.match(reply(db,null,'c',alice,'!conquistas'),/0\/8 conquistas feitas/);assert.equal(db.listPlayers('c').length,0);
+ const legendary=db.listItems().find(i=>i.rarity==='Lendário');db.applyCatch('c',alice,legendary,7);db.unlockAchievements('c','alice');
+ const achievements=reply(db,null,'c',alice,'!CONQUISTAS');assert.match(achievements,/1\/8/);assert.doesNotMatch(achievements,/Primeira Pescaria/);assert.match(reply(db,null,'c',alice,'!colecao'),/1\/8/);assert.match(reply(db,null,'c',alice,'!rank'),/posição 1/);assert.match(reply(db,null,'c',alice,'!lendarios'),/1 capturas lendárias/);assert.match(reply(db,null,'c',alice,'!miticos'),/0 capturas míticas/);assert.match(reply(db,null,'c',alice,'!evento'),/nenhum evento ativo/);assert.equal(reply(db,null,'c',alice,'!pescar'),null);
+});
+test('editable commands reject duplicate names and unknown variables before any setting changes',t=>{
+ const {db}=fixture(t);const data=listCommands(db);data[0].command='!metas';data[0].template='@{user}: {conquistas} de {conquistas_total}';saveCommands(db,data);assert.equal(reply(db,null,'c',alice,'!conquistas'),null);assert.match(reply(db,null,'c',alice,'!metas'),/0 de 8/);
+ const duplicate=listCommands(db);duplicate[1].command='!pescar';assert.throws(()=>saveCommands(db,duplicate),/mesmo nome/);assert.equal(listCommands(db)[1].command,'!colecao');const invalid=listCommands(db);invalid[1].template='{nao_existe}';assert.throws(()=>saveCommands(db,invalid),/desconhecida/);
+ const disabled=listCommands(db);disabled[0].enabled=false;saveCommands(db,disabled);assert.equal(reply(db,null,'c',alice,'!metas'),null);
+});
+test('main chat handler uses the authorized bot for queries without starting a catch or visual event',async t=>{
+ const {db,dir}=fixture(t);db.applyCatch('local-test',alice,db.listItems()[0],7);db.unlockAchievements('local-test','alice');let ready,server,bot;const sends=[],broadcasts=[];
+ class TestServer extends LocalServer {constructor(options){super({...options,port:0});server=this;}broadcast(event){broadcasts.push(event);super.broadcast(event);}}
+ class Bot extends EventEmitter {constructor(){super();bot=this;}isConnected(){return true;}async sendChatMessage(message){sends.push({account:'FishingBotJJJ',message});}disconnect(){}}
+ const electron={app:{whenReady:()=>({then(fn){ready=fn;}}),getPath:()=>dir,on(){},quit(){}},BrowserWindow:class{loadURL(){}},shell:{openExternal(){}},ipcMain:{handle(){}}};
+ const file=path.join(__dirname,'../src/main.js');const factory=vm.runInThisContext('(function(require,module,__dirname){'+fs.readFileSync(file,'utf8')+'\n})');factory(name=>name==='electron'?electron:name==='./database'?{GameDatabase:class{constructor(){return db;}}}:name==='./local-server'?{LocalServer:TestServer}:name==='./twitch-client'?{TwitchClient:Bot}:name==='./fishing-engine'?{FishingEngine}:name==='./chat-commands'?require('../src/chat-commands'):name==='./first-release'?{prepareFirstRelease:()=>({reset:false})}:require(name),{exports:{}},path.dirname(file));
+ await ready();t.after(async()=>{for(const c of server.wss.clients)c.terminate();await server.stop();});const catches=db.getPlayer('local-test','alice').total_catches;const onChat=bot.listeners('chatMessage')[0];await onChat({text:'!conquistas',user:alice});await onChat({text:'!rank',user:alice});assert.equal(sends.length,2);assert.equal(sends[0].account,'FishingBotJJJ');assert.match(sends[0].message,/1\/8 conquistas/);assert.equal(db.getPlayer('local-test','alice').total_catches,catches);assert.ok(!broadcasts.some(e=>['fishing:start','fishing:result','panel:show','special:catch'].includes(e.type)));
+ const response=await fetch('http://127.0.0.1:'+server.port+'/api/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({command:'!rank'})});assert.equal(response.status,400);
+});

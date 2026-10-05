@@ -1,0 +1,25 @@
+LAG DO MOUSE — RESULTADO PARCIAL
+
+O lag não foi reproduzido nem teve a causa identificada.
+Na amostra de aproximadamente cinco segundos, os processos observados
+estavam com uso baixo de CPU (maiores valores aproximadamente 0,2% do total).
+Essa amostra não mede atrasos de drivers nem falhas muito breves.
+O Windows negou a leitura detalhada de memória e controladores de vídeo.
+Não foram alterados drivers, serviços, inicialização ou configurações do sistema.
+
+COMO ISOLAR, UMA ETAPA DE CADA VEZ
+1. Reinicie o computador quando puder e teste o mouse antes de abrir os apps.
+2. Se já estiver travando nesse momento, anote isso: ajuda a separar o problema
+   do funcionamento dos aplicativos.
+3. Se for USB (com fio ou receptor), teste outra porta, diretamente no PC.
+4. Se for sem fio, confira a carga e teste mais perto do receptor.
+5. Se possível, teste outro mouse nesse computador ou esse mouse em outro PC.
+6. Depois abra somente o Fishing Chat Game e teste parado e pescando.
+7. Informe tipo de mouse, em qual etapa trava e se áudio/imagem também travam.
+
+Orientação da Microsoft para mouse/teclado no Windows:
+https://support.microsoft.com/en-us/windows/hardware/input-devices/mouse-and-keyboard-problems-in-windows
+
+No aplicativo, a prévia parada não fica animando; o arraste é limitado por
+quadro e a imagem dos cartões não é recriada a cada movimento do ponteiro.
+Isso reduz trabalho no editor, mas não confirma a causa do lag do sistema.

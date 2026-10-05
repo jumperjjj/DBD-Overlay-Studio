@@ -1,0 +1,22 @@
+ARQUIVOS DO GITHUB — 1.0.0
+
+SUBSTITUIR ESTES 14 ARQUIVOS EXISTENTES (mesmo caminho):
+.github/workflows/build-windows.yml
+COMO-APLICAR.txt
+README.md
+package.json
+src/database.js
+src/fishing-engine.js
+src/local-server.js
+src/main.js
+src/preload.js
+src/public/app.js
+src/public/index.html
+src/public/overlay.html
+src/public/style.css
+src/twitch-client.js
+
+ADICIONAR os outros arquivos e pastas deste ZIP.
+Inclua package-lock.json, tests e TODOS os novos arquivos de src.
+O workflow fica em .github/workflows/build-windows.yml.
+Não envie node_modules, dist, bancos ou o ZIP como código do repositório.

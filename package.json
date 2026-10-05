@@ -1,74 +1,45 @@
 {
-  "name": "dbd-overlay-studio",
-  "version": "2.0.4-beta.1",
-  "description": "DBD Overlay Studio - Beta 2.0.4",
-  "main": "main-v2.js",
-  "author": "Jumper",
-  "license": "MIT",
+  "name": "twitch-fishing-game",
+  "version": "1.0.0",
+  "description": "Jogo de pescaria interativo para Twitch com bot dedicado, catálogo com imagens, coleção, conquistas, ranking editável e overlay local para OBS.",
+  "main": "src/main.js",
+  "type": "commonjs",
   "scripts": {
+    "test": "node --test tests/*.test.js",
     "start": "electron .",
+    "dev": "electron .",
+    "check": "node --check src/main.js && node --check src/database.js && node --check src/fishing-engine.js && node --check src/local-server.js && node --check src/twitch-client.js && node --check src/overlay-options.js && node --check src/game-events.js && node --check src/chat-commands.js && node --check src/public/app.js && node --check src/public/visuals.js && node --check src/public/display.js && node --check src/public/extra-editor.js && node --check src/public/events.js && node --check src/public/query-commands.js && node --check src/public/sounds.js && node --check src/public/special-presentation.js && node --check src/first-release.js",
     "dist": "electron-builder --win nsis"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "ws": "^8.18.3"
   },
   "devDependencies": {
     "electron": "^38.0.0",
     "electron-builder": "^26.0.12"
   },
   "build": {
-    "appId": "com.saranked.dbdoverlaymapwinstreak",
-    "productName": "DBD Overlay Studio",
+    "appId": "com.fishingchat.game",
+    "productName": "Fishing Chat Game",
     "asar": true,
     "files": [
-      "main-v2.js",
-      "main.js",
-      "preload.js",
-      "app.html",
-      "streak.html",
-      "match.html",
-      "obs.html",
-      "obs-streak.html",
-      "obs-match.html",
-      "timer-ui.js",
-      "timer.html",
-      "obs-timer.html",
-      "timer-render.js",
-      "timer-render.css",
-      "killers/**/*",
-      "Survivors/**/*",
-      "assets/**/*",
-      "streak-ui-v2.js",
-      "streak-render.js",
-      "streak-render.css"
+      "src/**/*",
+      "package.json"
     ],
     "win": {
       "target": [
-        {
-          "target": "nsis",
-          "arch": [
-            "x64"
-          ]
-        }
+        "nsis"
       ],
-      "artifactName": "DBD-Overlay-Studio-Beta-2.0.4-Windows-x64-Setup.${ext}",
-      "executableName": "DBD Overlay Studio",
-      "icon": "assets/icon.ico"
+      "signAndEditExecutable": false
     },
     "nsis": {
-      "oneClick": true,
-      "perMachine": false,
-      "allowElevation": false,
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
-      "createStartMenuShortcut": true,
-      "shortcutName": "DBD Overlay Studio",
-      "uninstallDisplayName": "DBD Overlay Studio",
-      "installerIcon": "assets/icon.ico",
-      "uninstallerIcon": "assets/icon.ico"
+      "createStartMenuShortcut": true
     },
-    "asarUnpack": [
-      "node_modules/uiohook-napi/**/*"
-    ]
+    "artifactName": "Fishing-Chat-Game-Setup-${version}.${ext}"
   },
-  "productName": "DBD Overlay Studio",
-  "dependencies": {
-    "uiohook-napi": "1.5.4"
-  }
+  "author": "JumperJJJ"
 }

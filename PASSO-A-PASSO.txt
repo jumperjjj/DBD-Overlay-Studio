@@ -1,0 +1,143 @@
+FISHING CHAT GAME 1.0.0 — TESTE LOCAL
+
+ABRIR
+1. Feche a versão anterior do aplicativo.
+2. Baixe o ZIP completo em Downloads.
+3. Clique com o botão direito no ZIP e escolha Extrair Tudo.
+4. Abra a pasta extraída e dê dois cliques em INICIAR.bat.
+5. Aguarde a instalação automática, se necessária, e mantenha o terminal aberto.
+6. Nas próximas vezes, abra o mesmo INICIAR.bat.
+Não precisa gerar EXE, procurar package.json ou atualizar GitHub.
+O Node.js 24 já instalado no seu PC é necessário.
+Use uma pasta nova. O progresso dos jogadores será zerado uma única vez na
+primeira abertura desta versão, com backup. Catálogo e configurações ficam mantidos.
+
+COMECE PELA NOVA ABA COMANDOS
+1. Abra Comandos. Agora há duas seções: Pescaria e Consultas.
+2. Pescaria reúne comando, cooldown, tempos e mensagens em cards menores.
+3. Consultas permite editar e ativar cada comando e sua resposta do bot:
+   !conquistas — quantidade obtida/total, sem listar os nomes.
+   !colecao — descobertas/total de itens.
+   !rank — posição, pescarias e ouro do próprio jogador.
+   !lendarios — quantidade de capturas lendárias.
+   !miticos — quantidade de capturas míticas.
+   !evento — evento ativo, efeitos e tempo restante.
+4. Clique em Salvar consultas antes de testar no chat.
+5. Cada card mostra suas variáveis. Outras estão em Variáveis disponíveis.
+6. Exemplo de conquista: @{user}: {conquistas} de {conquistas_total} feitas.
+7. Dois comandos ativos não podem ter o mesmo nome. O comando de pescaria
+   também deve ser diferente das consultas.
+8. As consultas enviam somente texto. Não abrem nenhum overlay.
+9. As respostas são enviadas pela conta do bot que autorizou a conexão.
+   Para FishingBotJJJ, autorize FishingBotJJJ e use esse login como conta esperada.
+
+EVENTOS
+1. Abra Eventos e dê um nome ao evento.
+2. Escolha duração em minutos. Os atalhos permitem 1 hora e 2 horas.
+3. Marque apenas os efeitos que quiser combinar:
+   Ouro bônus: +25% transforma 100 em 125; +100% dobra o ganho.
+   Peixes raros: aumenta as chances relativas das raridades selecionadas.
+   Águas amaldiçoadas: aumenta as chances dos itens amaldiçoados já cadastrados.
+   Frenesi: diminui a espera individual. Metade é −50%; −80% deixa 20% da espera.
+4. O painel Como fica o sorteio compara as porcentagens efetivas antes/depois.
+   Bônus de chances são relativos: +50% multiplica o valor do item por 1,5
+   antes de calcular a chance efetiva. Não são 50 pontos percentuais.
+5. O bônus de ouro não aumenta as perdas de amaldiçoados.
+6. Confira a mensagem do bot; use {evento}, {efeitos} e {duracao}.
+7. Salvar configuração prepara o próximo evento. Iniciar evento aplica agora.
+8. Só pode haver um evento ativo por canal, mas ele pode combinar vários efeitos.
+9. O evento encerra automaticamente. Encerrar agora permite terminar antes.
+10. Ao terminar, os valores normais voltam; o catálogo e o cooldown base não são alterados.
+11. Um evento ativo continua salvo após fechar o programa até seu horário final.
+12. A chance e o bônus de ouro são definidos quando a animação da pescaria começa.
+    O cooldown reduzido é conferido quando o comando é aceito.
+13. O bot precisa estar conectado para enviar os avisos de início/fim.
+    Se estiver desconectado, o evento ainda funciona e o aplicativo mostra um aviso.
+    Mensagens perdidas não são enviadas retroativamente ao conectar.
+14. A fila visual continua uma pessoa por vez, com três segundos após o último aviso.
+
+PEIXES AMALDIÇOADOS
+1. Em Peixes e itens, clique em Adicionar item e escolha Amaldiçoado.
+2. Cadastre seu nome, imagem e uma chance relativa baixa.
+3. Perda mín. e Perda máx. usam valores positivos, por exemplo 1.000 e 5.000.
+4. A captura sorteia a perda nessa faixa e desconta até o saldo disponível.
+   Se o jogador tem 500, uma perda de 2.000 tira 500 e deixa o saldo em zero.
+5. Pescarias e coleção continuam registradas. A overlay e o bot mostram a perda real.
+6. Não foram adicionados itens amaldiçoados automaticamente: você cria seus dois ou três.
+7. Em Comandos / Pescaria, edite a mensagem de captura amaldiçoada.
+   {ouro} nessa mensagem é a quantidade perdida; {ouro_total} é o saldo restante.
+8. Ouro ganho no histórico não é reduzido pelas perdas; existe uma condição separada
+   de conquista para Ouro perdido com capturas amaldiçoadas.
+
+VARA E IMAGENS DOS OVERLAYS
+1. A vara enviada substitui o emoji na animação Pescando.
+2. A vara e os peixes capturados ficam à direita do texto, em todos os modelos.
+3. A vara tem movimento leve e ondulações perto do anzol, feitos no próprio overlay.
+   Não é necessário instalar um GIF ou outro arquivo no OBS.
+4. Em Overlay / OBS, ajuste Tamanho da imagem e Escala da imagem (50–300%).
+5. Em Outros overlays, Coleção, Conquistas, Lendário e Mítico também têm esses controles.
+6. PNG/WEBP com transparência podem ser usados nos itens; o aplicativo preserva a transparência.
+7. Clique em Salvar. Para conferir a sequência, use o botão de teste.
+8. Recarregue a fonte de navegador no OBS depois de atualizar esta versão.
+
+FONTES OBS
+Pescaria: http://127.0.0.1:8766/overlay.html (padrão 640 x 360)
+Ranking: http://127.0.0.1:8766/display.html?surface=ranking
+Conquistas: http://127.0.0.1:8766/display.html?surface=achievements
+Coleção: http://127.0.0.1:8766/display.html?surface=collection
+Lendário: integrado à fonte normal de pescaria.
+Mítico: integrado à fonte normal de pescaria.
+
+Em Outros overlays, escolha a aba, copie a URL e adicione uma fonte Navegador
+no OBS. Coloque o tamanho mostrado no aplicativo também nas propriedades do OBS.
+Painéis: padrão 640 x 480. Efeitos especiais: 1280 x 720.
+O streamer mostra ranking, coleção e conquistas pelos botões do aplicativo.
+Os comandos de consulta não abrem os painéis.
+
+EXCLUIR UM JOGADOR
+1. Em Ranking, Resetar mantém a pessoa na lista e zera ouro/pescarias.
+2. O novo Excluir remove a pessoa do canal atual, incluindo ranking, coleção,
+   conquistas e histórico. O botão pede confirmação mostrando isso.
+3. Se ela tiver uma pescaria na fila ou na tela, aguarde terminar para excluir.
+4. Uma nova pescaria cria um cadastro vazio. A mesma pessoa em outro canal não é afetada.
+
+CONQUISTAS
+33 ideias prontas, incluindo pelo menos uma de cada raridade e novas ideias
+para amaldiçoados. Escolha uma ideia, ajuste e clique em Salvar conquista.
+Há 14 condições. Sugestões não viram conquistas ativas até serem salvas.
+
+RELEASE 1.0.0
+Leia PASSO-A-PASSO-RELEASE-v1.0.0.txt para subir os arquivos e gerar o EXE.
+O reset único acontece na primeira abertura, após backup automático.
+
+VERIFICAÇÃO / ERROS
+32 testes automatizados, incluindo a rota de chat do aplicativo usando o bot,
+eventos persistentes, término automático, descontos, exclusão e sorteios.
+Interface verificada em navegador com servidor real a 1260 x 840.
+Twitch e OBS reais ainda precisam do seu teste na live.
+Se aparecer EADDRINUSE, feche as outras versões: a porta é 8766.
+Se houver erro, mantenha a janela aberta e envie a mensagem.
+O diagnóstico do lag do mouse permanece em DIAGNOSTICO-LAG.txt; a causa
+ainda não foi identificada. Não foram alterados drivers ou o Windows.
+
+AJUSTES 1.0.0
+- Água fixa; apenas a vara sobe e desce. Quatro bolhinhas leves acompanham a espera.
+- Conquistas e coleção compactas usam até duas colunas para caber imagem e nome.
+- Lendário e mítico têm sons distintos na fonte de pescaria do OBS.
+- O controle Som da overlay também silencia os sons especiais.
+- Recarregue as fontes de navegador do OBS depois de abrir esta versão.
+- Troque a imagem em Peixes e itens: ela também é usada na coleção e nas capturas especiais seguintes.
+- Este ZIP contém só o aplicativo; as imagens transparentes estão no ZIP separado já entregue.
+- O reset único está preparado para a primeira abertura da versão 1.0.0.
+
+AJUSTES 1.0.0
+- Lendário e mítico substituem o resultado pequeno na mesma fonte de pescaria do OBS.
+- A pescaria pequena brilha e dá lugar ao cartão especial, com som próprio.
+- Não é preciso adicionar fontes separadas para as capturas especiais automáticas.
+- Outros overlays > Lendário ou Mítico > Testar pescaria completa testa toda a sequência, sem ouro ou progresso real.
+- O botão usa as opções atuais do editor; clique em Salvar para usá-las nas capturas reais.
+- Os cartões especiais ficaram menores e mantêm escala e imagem ajustáveis.
+- Peixes e itens: a caixinha à esquerda da imagem habilita/desabilita a participação nas pescarias.
+- Para garantir uma raridade no teste, deixe somente um item dessa raridade habilitado e com chance maior que zero.
+- Desabilitar preserva imagem, chance cadastrada, coleção e histórico.
+- Recarregue a fonte de pescaria no OBS depois da atualização.

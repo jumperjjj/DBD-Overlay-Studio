@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Fishing Overlay</title>
+<link rel="stylesheet" href="display.css"/>
+<style>
+  * { box-sizing:border-box; }
+  html,body { width:100%; height:100%; margin:0; overflow:hidden; background:transparent; font-family:Inter,Arial,sans-serif; }
+  .stage { position:relative; width:100%; height:100%; pointer-events:none; }
+  .anchor { position:absolute; left:50%; top:86%; transform:translate(-50%,-50%) scale(1); transform-origin:center; }
+  .card { min-width:250px; max-width:440px; padding:11px 16px; border-radius:16px; background:rgba(7,19,29,.9); border:1px solid rgba(112,224,197,.45); box-shadow:0 14px 38px rgba(0,0,0,.36); color:#fff; opacity:0; display:flex; align-items:center; gap:12px; }
+  .card.show[data-animation="pop"] { animation:popIn .34s cubic-bezier(.2,.9,.2,1) forwards; }
+  .card.show[data-animation="slide"] { animation:slideIn .38s cubic-bezier(.2,.8,.2,1) forwards; }
+  .card.show[data-animation="bounce"] { animation:bounceIn .5s cubic-bezier(.2,.85,.25,1.2) forwards; }
+  .card.show[data-animation="fade"] { animation:fadeIn .45s ease forwards; }
+  .card.show[data-animation="zoom"] { animation:zoomIn .45s ease forwards; }
+  .card[data-layout="compact"] { min-width:180px; max-width:360px; padding:8px 12px; }
+  .card[data-layout="compact"] .item { font-size:16px; }
+  .card[data-layout="compact"] .hook { width:42px; height:42px; font-size:28px; }
+  .card[data-layout="showcase"] { min-width:220px; max-width:330px; }
+  .card[data-layout="showcase"] #content { flex-direction:column; text-align:center; }
+  @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+  @keyframes zoomIn { from { opacity:0; transform:scale(1.18); } to { opacity:1; transform:scale(1); } }
+  .card.hide { animation:fadeOut .22s ease forwards !important; }
+  #content { display:flex; align-items:center; gap:12px; width:100%; }
+  .copy { min-width:0; }
+  .name { font-size:13px; font-weight:800; opacity:.78; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .fishing { font-size:12px; font-weight:850; color:#70e0c5; letter-spacing:.09em; margin-top:4px; }
+  .hook { width:66px; height:66px; display:grid; place-items:center; flex:0 0 auto; font-size:38px; animation:bob .85s ease-in-out infinite; }
+  .card:not(.show) .hook { animation-play-state:paused; }
+  .item-image { width:72px; height:72px; object-fit:contain; flex:0 0 auto; filter:drop-shadow(0 6px 10px rgba(0,0,0,.35)); animation:itemRise .45s cubic-bezier(.2,.9,.3,1.15); }
+  .item { font-size:21px; font-weight:950; line-height:1.05; margin-top:2px; overflow-wrap:anywhere; }
+  .rarity { font-size:10px; font-weight:900; letter-spacing:.12em; text-transform:uppercase; color:#70e0c5; margin-top:5px; }
+  .gold { font-size:14px; font-weight:900; color:#ffd45f; margin-top:4px; }
+  .card.panel-card { width:min(600px,calc(100vw - 32px)); min-width:0; max-width:none; }
+  .card.panel-card #content { display:block; text-align:left; }
+  .panel-heading { font-size:18px; font-weight:900; margin-bottom:8px; }
+  .panel-table { border-collapse:collapse; width:100%; font-size:12px; table-layout:fixed; }
+  .panel-table th { text-align:left; opacity:.65; font-size:10px; padding:5px 4px; }
+  .panel-table td { border-top:1px solid rgba(255,255,255,.12); padding:7px 4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .panel-table th:first-child { width:34%; }
+  .panel-footer { opacity:.7; font-size:10px; margin-top:8px; }
+  @keyframes bob { 50% { transform:translateY(6px) rotate(7deg); } }
+  @keyframes itemRise { from { transform:translateY(10px) scale(.78); opacity:0; } to { transform:translateY(0) scale(1); opacity:1; } }
+  @keyframes popIn { from { opacity:0; transform:scale(.84); } to { opacity:1; transform:scale(1); } }
+  @keyframes slideIn { from { opacity:0; transform:translateY(22px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes bounceIn { 0% { opacity:0; transform:scale(.72); } 70% { opacity:1; transform:scale(1.07); } 100% { opacity:1; transform:scale(1); } }
+  @keyframes fadeOut { from { opacity:1; } to { opacity:0; transform:translateY(8px); } }
+  #content .copy { order:1;flex:1; }
+  #content .item-image,#content .rod-visual { order:2; }
+  .card[data-layout="showcase"] #content { flex-direction:row;text-align:left; }
+  .rod-visual { flex:none;position:relative; }
+  .rod-motion { position:absolute;inset:0;transform-origin:25% 75%;animation:rodDip 1.6s ease-in-out infinite; }
+  .rod-sprite { width:100%;height:100%;object-fit:contain;image-rendering:pixelated; }
+  .rod-water { position:absolute;left:75%;top:69%;width:26%;height:15%;border-radius:50%;background:#38b8da22;border-top:1px solid #70dbef99; }
+  .rod-bubble { position:absolute;left:var(--bubble-x);top:76%;width:4%;height:4%;border:1px solid #a0edff;border-radius:50%;opacity:0;animation:rodBubble 1.8s ease-out infinite;animation-delay:var(--bubble-delay); }
+  @keyframes rodDip { 0%,100% { transform:rotate(-2deg) translateY(-2px); } 50% { transform:rotate(2deg) translateY(3px); } }
+  @keyframes rodBubble { 0%,15% { opacity:0;transform:translate(0,0) scale(.5); } 35% { opacity:.85; } 85%,100% { opacity:0;transform:translate(-3px,-8px) scale(1); } }
+  .card:not(.show) .rod-motion,.card:not(.show) .rod-bubble { animation-play-state:paused; }
+  .card.reveal { animation:castReveal .35s ease both!important; }
+  @keyframes castReveal { 0% { opacity:1; } 45% { opacity:1;filter:brightness(1.8);transform:scale(1.05); } 100% { opacity:0;transform:scale(.8); } }
+  #specialPosition { position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);transform-origin:center; }
+</style>
+</head>
+<body>
+<div class="stage"><div id="anchor" class="anchor"><div id="card" class="card" data-animation="pop"><div id="content"></div></div></div><div id="specialPosition"><div id="board" hidden></div></div></div>
+<script src="visuals.js"></script>
+<script src="sounds.js"></script>
+<script src="special-presentation.js"></script>
+<script>
+const anchor = document.getElementById('anchor');
+const card = document.getElementById('card');
+const content = document.getElementById('content');
+let hideTimer;
+let panelTimer;
+let soundEnabled = true;
+let overlayEnabled = true;
+let showImage = true;
+let imageSize = 72;
+let audioContext;
+let currentSettings = {};
+const specialPosition=document.getElementById('specialPosition'),specialBoard=document.getElementById('board');
+let revealTimer,specialHideTimer,specialClearTimer,specialStyle={};
+function clearSpecial(){clearTimeout(revealTimer);clearTimeout(specialHideTimer);clearTimeout(specialClearTimer);specialBoard.hidden=true;card.classList.remove('reveal');}
+function fitSpecial(){if(specialBoard.hidden)return;const scale=Math.max(.01,Math.min(Number(specialStyle.scale||100)/100,(innerWidth-24)/specialBoard.offsetWidth,(innerHeight-24)/specialBoard.offsetHeight));const w=specialBoard.offsetWidth*scale,h=specialBoard.offsetHeight*scale;specialPosition.style.left=Math.max(w/2+12,Math.min(innerWidth-w/2-12,innerWidth*Number(specialStyle.x??50)/100))+'px';specialPosition.style.top=Math.max(h/2+12,Math.min(innerHeight-h/2-12,innerHeight*Number(specialStyle.y??50)/100))+'px';specialPosition.style.transform=`translate(-50%,-50%) scale(${scale})`;}
+window.addEventListener('resize',fitSpecial);
+function revealSpecial(data){
+  clearSpecial();clearTimeout(hideTimer);clearTimeout(panelTimer);
+  if(!overlayEnabled)return;
+  specialStyle=data.special.style;
+  const kind=data.special.kind,delay=data.resumed?0:Number(data.special.transitionMs||350);
+  if(!data.resumed&&card.classList.contains('show'))card.classList.add('reveal');else card.classList.remove('show');
+  revealTimer=setTimeout(()=>{
+    card.classList.remove('show','reveal','hide');card.style.visibility='hidden';
+    SpecialPresentation.styleBoard(specialBoard,specialStyle);
+    specialBoard.innerHTML=SpecialPresentation.html(data,specialStyle,kind);
+    specialBoard.className='special '+(specialStyle.layout||'cinematic')+' '+kind;
+    specialBoard.hidden=false;void specialBoard.offsetWidth;specialBoard.classList.add('show');fitSpecial();
+    for(const image of specialBoard.querySelectorAll('img'))image.addEventListener('load',fitSpecial,{once:true});
+    if(soundEnabled&&!data.resumed)FishingSounds.playSpecial(kind);
+    specialHideTimer=setTimeout(()=>{specialBoard.classList.remove('show');specialBoard.classList.add('hide');specialClearTimer=setTimeout(()=>specialBoard.hidden=true,250);},Math.max(0,Number(data.durationMs||6000)-delay));
+  },delay);
+}
+if (new URLSearchParams(location.search).has('preview')) {
+  document.documentElement.style.background = '#102b37';
+  document.body.style.background = '#102b37';
+}
+
+function hexToRgba(hex, alpha) {
+  const value = String(hex || '#000000').replace('#','');
+  const normalized = value.length === 3 ? value.split('').map(c => c+c).join('') : value.padEnd(6,'0').slice(0,6);
+  const num = parseInt(normalized,16);
+  return `rgba(${(num>>16)&255},${(num>>8)&255},${num&255},${alpha})`;
+}
+
+function applySettings(settings = {}) {
+  currentSettings = settings;
+  soundEnabled = settings.overlay_sound_enabled !== '0';
+  overlayEnabled = settings.overlay_enabled !== '0';
+  showImage = settings.overlay_show_image !== '0';
+  imageSize = Number(settings.overlay_image_size || 72)*Number(settings.overlay_image_scale||100)/100;
+  const x = Number(settings.overlay_x || 50);
+  const y = Number(settings.overlay_y || 86);
+  const scale = Number(settings.overlay_scale || 100) / 100;
+  const opacity = Number(settings.overlay_opacity || 90) / 100;
+  const bg = settings.overlay_bg_color || '#07131d';
+  const text = settings.overlay_text_color || '#ffffff';
+  const accent = settings.overlay_accent_color || '#70e0c5';
+  const gold = settings.overlay_gold_color || '#ffd45f';
+  const radius = Number(settings.overlay_radius || 16);
+  anchor.style.left = `${x}%`;
+  anchor.style.top = `${y}%`;
+  anchor.style.transform = `translate(-50%,-50%) scale(${scale})`;
+  card.style.background = hexToRgba(bg, opacity);
+  card.style.color = text;
+  card.style.borderColor = hexToRgba(accent, .48);
+  card.style.borderRadius = `${radius}px`;
+  card.dataset.animation = settings.overlay_animation || 'pop';
+  card.dataset.layout = settings.overlay_layout || 'classic';
+  card.style.display = overlayEnabled ? 'flex' : 'none';
+  if(!overlayEnabled)clearSpecial();
+  document.documentElement.style.setProperty('--accent', accent);
+  document.documentElement.style.setProperty('--gold', gold);
+}
+
+
+function show(html, ms=4000, panel=false) {
+  clearSpecial();
+  card.style.visibility='visible';
+  if (!overlayEnabled) return;
+  clearTimeout(hideTimer);
+  clearTimeout(panelTimer);
+  card.classList.toggle('panel-card',panel);
+  content.outerHTML; // força reflow indireto antes de animar
+  content.innerHTML = html;
+  card.classList.remove('show','hide');
+  void card.offsetWidth;
+  card.classList.add('show');
+  fitAnchor();
+  if (ms) hideTimer = setTimeout(() => {
+    card.classList.remove('show');
+    card.classList.add('hide');
+  }, ms);
+}
+
+function fitAnchor() {
+  const requestedScale=Number(currentSettings.overlay_scale || 100)/100;
+  const scale=Math.max(.1,Math.min(requestedScale,(innerWidth-32)/Math.max(1,card.offsetWidth),(innerHeight-32)/Math.max(1,card.offsetHeight)));
+  anchor.style.transform=`translate(-50%,-50%) scale(${scale})`;
+  const width=card.offsetWidth*scale, height=card.offsetHeight*scale;
+  const x=Number(currentSettings.overlay_x || 50)/100*innerWidth;
+  const y=Number(currentSettings.overlay_y || 86)/100*innerHeight;
+  anchor.style.left=Math.max(Math.min(innerWidth/2,width/2+16),Math.min(innerWidth-width/2-16,x))+'px';
+  anchor.style.top=Math.max(Math.min(innerHeight/2,height/2+16),Math.min(innerHeight-height/2-16,y))+'px';
+}
+window.addEventListener('resize',fitAnchor);
+
+function ctx() {
+  if (!soundEnabled) return null;
+  try {
+    audioContext ||= new (window.AudioContext || window.webkitAudioContext)();
+    if (audioContext.state === 'suspended') audioContext.resume();
+    return audioContext;
+  } catch { return null; }
+}
+
+function playCastSound() {
+  const c = ctx(); if (!c) return;
+  const now = c.currentTime;
+  const osc = c.createOscillator(); const gain = c.createGain();
+  osc.type = 'sine'; osc.frequency.setValueAtTime(760, now); osc.frequency.exponentialRampToValueAtTime(160, now + .2);
+  gain.gain.setValueAtTime(.0001, now); gain.gain.exponentialRampToValueAtTime(.14, now + .014); gain.gain.exponentialRampToValueAtTime(.0001, now + .23);
+  osc.connect(gain).connect(c.destination); osc.start(now); osc.stop(now + .24);
+}
+
+function playCatchSound(rarity) {
+  const c = ctx(); if (!c) return;
+  const now = c.currentTime; const rare = ['Épico','Lendário','Mítico'].includes(rarity);
+  const notes = rare ? [440,660,880] : [330,520];
+  notes.forEach((freq,index) => {
+    const osc = c.createOscillator(); const gain = c.createGain(); const start = now + index * .075;
+    osc.type = rare ? 'triangle' : 'sine'; osc.frequency.setValueAtTime(freq,start);
+    gain.gain.setValueAtTime(.0001,start); gain.gain.exponentialRampToValueAtTime(.13,start+.015); gain.gain.exponentialRampToValueAtTime(.0001,start+.22);
+    osc.connect(gain).connect(c.destination); osc.start(start); osc.stop(start+.24);
+  });
+}
+
+let ws;
+function connectOverlay() {
+ws = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/ws`);
+ws.addEventListener('close', () => setTimeout(connectOverlay, 1500));
+ws.addEventListener('error', () => ws.close());
+ws.addEventListener('message', (event) => {
+  const data = JSON.parse(event.data);
+  // Painéis manuais têm fontes independentes em display.html.
+  if (data.type === 'achievement:unlocked' && currentSettings.achievement_overlay_enabled !== '0') {
+    playCatchSound('Lendário');
+    show(`<div class="hook">${FishingVisuals.icon(data.achievement.metric)}</div><div class="copy"><div class="name">${esc(data.user.displayName)} conquistou!</div><div class="item">${esc(data.achievement.name)}</div><div class="rarity">${esc(data.achievement.description)}</div></div>`, data.durationMs ?? 4000);
+  }
+  if (data.type === 'settings:updated') applySettings(data.settings || {});
+  if (data.type === 'fishing:start') {
+    playCastSound();
+    show(`<div class="copy"><div class="name">${esc(data.user.displayName)}</div><div class="fishing" style="color:${escAttr(currentSettings.overlay_accent_color || '#70e0c5')}">PESCANDO...</div></div><div class="rod-visual" style="width:${imageSize}px;height:${imageSize}px"><span class="rod-water"></span><div class="rod-motion"><img class="rod-sprite" src="/assets/fishing-rod.png" alt="Vara de pesca"/></div>${[74,81,88,95].map((x,i)=>`<span class="rod-bubble" style="--bubble-x:${x}%;--bubble-delay:${i*.35}s"></span>`).join('')}</div>`, Math.max(1, data.durationMs));
+  }
+  if (data.type === 'fishing:result') {
+    if(data.special&&data.special.style.enabled!=='0'){revealSpecial(data);return;}
+    const specialKind = data.item.rarity === 'Lendário' ? 'legendary' : data.item.rarity === 'Mítico' ? 'mythic' : '';
+    if (!specialKind) playCatchSound(data.item.rarity);
+    else if (currentSettings[specialKind + '_overlay_enabled'] === '0' && soundEnabled) FishingSounds.playSpecial(specialKind);
+    const image = showImage && data.item.image_path ? `<img class="item-image" style="width:${imageSize}px;height:${imageSize}px" src="${escAttr(data.item.image_path)}" alt="" />` : '';
+    const accent = escAttr(currentSettings.overlay_accent_color || '#70e0c5');
+    const gold = escAttr(currentSettings.overlay_gold_color || '#ffd45f');
+    show(`<div class="copy"><div class="name">${esc(data.user.displayName)}</div><div class="item">${esc(data.item.name)}</div><div class="rarity" style="color:${accent}">${esc(data.item.rarity)}</div><div class="gold" style="color:${gold}">${data.item.isCursed?'−':'+'}${Math.abs(Number(data.item.goldAwarded)).toLocaleString('pt-BR')} OURO</div></div>${image}`, data.durationMs ?? 5200);
+  }
+});
+
+}
+connectOverlay();
+
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function escAttr(v){return esc(v).replace(/`/g,'&#96;');}
+</script>
+</body>
+</html>
