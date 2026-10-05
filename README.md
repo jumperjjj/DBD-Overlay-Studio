@@ -37,7 +37,7 @@ CLIENT-ID-E-BOT.md explica a conta autorizada e o Client ID. DIAGNOSTICO-LAG.txt
 
 ## Release 1.0.0
 
-Consulte PASSO-A-PASSO-RELEASE-v1.0.0.txt para substituir os arquivos na branch main e publicar a tag v1.0.0. O workflow Build Windows gera e anexa o instalador ao release publicado.
+Consulte PASSO-A-PASSO-RELEASE-v1.0.0.txt para substituir os arquivos na branch main e publicar a tag v1.0.0. O workflow Build Windows roda automaticamente em cada commit na main e disponibiliza o EXE nos Artifacts. Ao publicar o release, também gera e anexa o instalador ao release.
 
 Na primeira abertura, inclusive por INICIAR.bat, o aplicativo cria um backup e zera uma única vez o progresso de todos os jogadores em todos os canais. Catálogo, imagens, definições de conquistas e configurações são preservados. Eventos ativos de teste são encerrados. As próximas aberturas mantêm o progresso novo. Falha no backup impede a limpeza.
 

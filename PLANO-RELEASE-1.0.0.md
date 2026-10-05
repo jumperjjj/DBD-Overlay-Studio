@@ -6,4 +6,4 @@ A migração src/first-release.js salva backup consistente do banco e das imagen
 
 A marca release_1_0_0_progress_reset é salva na mesma transação da limpeza. A próxima abertura preserva o progresso novo. Falha no backup impede a limpeza. A migração é executada na primeira abertura do aplicativo, inclusive por INICIAR.bat; nenhum banco pessoal foi alterado durante a preparação.
 
-O ZIP completo substitui os 14 arquivos existentes no repositório e adiciona os módulos, imagens do aplicativo, testes, lockfile e documentação necessários. O workflow gera o instalador e anexa ao release v1.0.0 publicado. Publicação e teste em live serão feitos pelo usuário.
+O ZIP completo substitui os 14 arquivos existentes no repositório e adiciona os módulos, imagens do aplicativo, testes, lockfile e documentação necessários. O workflow roda a cada commit na main, gera o instalador nos Artifacts e também anexa ao release v1.0.0 quando publicado. Publicação e teste em live serão feitos pelo usuário.

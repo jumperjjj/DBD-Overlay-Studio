@@ -1,86 +1,58 @@
-FISHING CHAT GAME 1.0.0 — GITHUB E RELEASE
+FISHING CHAT GAME 1.0.0 — ARRASTAR E DAR COMMIT
 
-1. BAIXAR E EXTRAIR
-Baixe Fishing-Chat-Game-v1.0.0-GitHub.zip em Downloads.
-Clique com o botão direito > Extrair Tudo.
-Abra a pasta extraída. Você verá package.json, package-lock.json, src,
-tests e INICIAR.bat. Esse é o nível correto para enviar ao GitHub.
+1. Baixe Fishing-Chat-Game-v1.0.0-GitHub-Automatico.zip em Downloads.
+2. Clique com o botão direito no ZIP > Extrair Tudo.
+3. Abra a pasta extraída. Você verá .github, src, tests, package.json,
+   package-lock.json, INICIAR.bat e os arquivos de orientação.
+4. Abra https://github.com/jumperjjj/fishing-chat-game na branch main.
+5. Clique em Add file > Upload files.
+6. Na pasta extraída, aperte Ctrl+A e arraste TODA A SELEÇÃO para o upload.
+   Inclua a pasta .github: é ela que contém o Action pronto.
+   Não arraste o ZIP nem a pasta externa: arraste o CONTEÚDO da pasta.
+7. Confira na lista do upload estes caminhos:
+   .github/workflows/build-windows.yml
+   package.json
+   package-lock.json
+   src/main.js
+   tests/first-release.test.js
+   Os caminhos devem começar assim, sem uma pasta extra na frente.
+8. Escreva Atualizar Fishing Chat Game 1.0.0.
+   Escolha Commit directly to the main branch > Commit changes.
+9. O workflow Build Windows já está no pacote e começa automaticamente
+   quando esse commit chega à main. Não precisa criar ou editar um Action
+   separado, publicar um release primeiro ou apertar Run workflow.
+10. Abra Actions > Build Windows > a execução do seu commit.
+    Aguarde o resultado verde. Abra essa execução e vá até Artifacts.
+11. Baixe Fishing-Chat-Game-Windows e extraia o ZIP recebido.
+    Dentro estará Fishing-Chat-Game-Setup-1.0.0.exe para instalar e testar.
 
-2. SUBSTITUIR OS ARQUIVOS DO REPOSITÓRIO
-Abra https://github.com/jumperjjj/fishing-chat-game
-Confira que a branch selecionada é main.
-Clique em Add file > Upload files.
-Na pasta extraída, selecione as pastas src e tests e os arquivos soltos
-(package.json, package-lock.json, README.md, INICIAR.bat, os .txt e .md).
-Arraste essa seleção para a área de upload. Selecione .gitignore também.
-Deixe a pasta .github para o próximo passo.
-NÃO arraste a pasta externa Fishing-Chat-Game-v1.0.0-GitHub nem o ZIP.
-Os caminhos na tela devem ser src/main.js, package.json etc., sem outra
-pasta na frente. Os arquivos com o mesmo caminho substituem os antigos.
-Confira que package-lock.json e todos os arquivos de src e tests estão lá.
-Escreva a mensagem: Preparar Fishing Chat Game 1.0.0
-Escolha Commit directly to the main branch e clique em Commit changes.
-Não precisa apagar o repositório. ARQUIVOS-GITHUB.txt lista as substituições.
+SE NÃO APARECER A EXECUÇÃO
+Confira no repositório se .github/workflows/build-windows.yml foi enviado
+no caminho exato. Ele deve conter push com branches: [main].
+Confira também se o commit foi salvo na main e se Actions está habilitado
+no repositório. A pasta .github do ZIP foi incluída como pasta normal.
+Se uma execução aparecer vermelha, abra a etapa vermelha e envie o erro.
 
-3. ATUALIZAR O ACTION QUE JÁ EXISTE
-Não crie outro workflow com outro nome.
-Abra este arquivo no GitHub:
-https://github.com/jumperjjj/fishing-chat-game/blob/main/.github/workflows/build-windows.yml
-Clique no lápis para editar.
-Na pasta extraída, abra build-windows-PARA-COPIAR.txt no Bloco de Notas.
-Ctrl+A, Ctrl+C. Volte ao editor do GitHub, selecione todo o conteúdo
-antigo e cole o novo. O nome continua build-windows.yml.
-Clique em Commit changes e salve na branch main.
-O TXT é uma cópia do YAML para facilitar; o GitHub executa o arquivo
-.github/workflows/build-windows.yml, não o TXT.
+DEPOIS, PARA POSTAR O RELEASE
+Releases > Draft a new release > crie a tag v1.0.0 com Target main.
+Título: Fishing Chat Game 1.0.0.
+Use RELEASE-NOTES-v1.0.0.md como descrição e clique em Publish release.
+Isso também dispara o Build Windows: quando terminar, o EXE será anexado
+automaticamente ao release, em Assets.
+Se v1.0.0 já existir, confira que aponta para o código atualizado antes
+de publicar. Para apenas testar, use o artifact gerado pelo commit.
 
-4. PUBLICAR A VERSÃO CORRETA
-Volte à página do repositório > Releases > Draft a new release.
-Em Choose a tag, digite v1.0.0 e escolha criar essa nova tag.
-Em Target, escolha main, já com os arquivos dos passos 2 e 3.
-Título: Fishing Chat Game 1.0.0
-Copie a descrição de RELEASE-NOTES-v1.0.0.md se quiser.
-Clique em Publish release. Não marque como pré-release.
-Use exatamente v1.0.0; não use v1.10.0.
-Não precisa anexar o ZIP do projeto nem um EXE manualmente.
+RESET SOLICITADO
+A primeira abertura da 1.0.0, inclusive por INICIAR.bat, salva um backup
+e zera o progresso dos jogadores em todos os canais uma única vez.
+Catálogo, imagens, configurações e definições de conquistas são mantidos.
+As próximas aberturas mantêm o progresso novo. Se o backup falhar, não limpa.
+Preparar e enviar este ZIP não altera seu banco pessoal.
 
-5. AGUARDAR O EXE
-Abra a aba Actions > Build Windows > execução referente a v1.0.0.
-O GitHub instala as dependências, verifica o código, roda os testes e
-gera o instalador. Aguarde o resultado verde.
-Volte ao release v1.0.0 e atualize a página.
-Em Assets aparecerá Fishing-Chat-Game-Setup-1.0.0.exe.
-Baixe ESSE arquivo para instalar. Source code (zip) não é o instalador.
-Se o Action ficar vermelho, abra a etapa vermelha e envie o erro.
-Após corrigir, na execução use Re-run failed jobs ou Re-run all jobs.
+TESTE LOCAL SEM COMPILAR
+Feche as versões anteriores e abra INICIAR.bat na pasta extraída.
+É necessário Node.js 24. Mantenha o terminal aberto enquanto testa.
+Recarregue as fontes do OBS após a atualização.
 
-OPCIONAL: COMPILAR ANTES DE PUBLICAR
-Depois do passo 3, Actions > Build Windows > Run workflow > main > Run workflow.
-Quando terminar, abra a execução e baixe o artifact Fishing-Chat-Game-Windows.
-Extraia esse ZIP para encontrar o EXE. Essa execução manual só gera o
-artifact; publicar o release no passo 4 dispara outra execução que anexa
-o EXE automaticamente ao release.
-
-6. PRIMEIRA ABERTURA E RESET SOLICITADO
-Feche as versões anteriores antes de instalar/abrir a 1.0.0.
-A PRIMEIRA abertura da 1.0.0 salva um backup e zera o progresso de todos
-os jogadores, em todos os canais: ouro, ranking, coleção, conquistas
-obtidas e histórico. Os eventos ativos de teste são encerrados.
-O catálogo de peixes/itens, suas imagens, as definições de conquistas e
-as configurações do bot, comandos e overlays são preservados.
-O reset acontece UMA VEZ. Fechar e abrir novamente mantém o progresso novo.
-O backup fica na pasta de dados do aplicativo, em backups/before-1.0.0-...,
-com fishing-game.db e item-images. Se o backup falhar, não limpa o progresso.
-O ZIP não contém seu banco pessoal nem tokens de autorização.
-Seu banco atual ainda não foi alterado ao preparar este pacote.
-
-TESTE LOCAL SEM EXE
-Você ainda pode abrir INICIAR.bat na pasta extraída, com Node.js 24 instalado.
-A PRIMEIRA abertura por INICIAR.bat também executa esse reset da 1.0.0.
-Mantenha a janela de terminal aberta durante o teste.
-Depois da atualização, recarregue as fontes de navegador do OBS.
-Teste Twitch e OBS na live: os testes automatizados não substituem isso.
-
-REFERÊNCIAS
-Upload: https://docs.github.com/en/repositories/working-with-files/managing-files/adding-a-file-to-a-repository
-Release no Actions: https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#release
+REFERÊNCIA
+https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#push
